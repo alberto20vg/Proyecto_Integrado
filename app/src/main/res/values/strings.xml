@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Proyecto_Integrado</string>
+    <string name="user">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="authentication_sucess">Authentication sucess</string>
+    <string name="log_in">iniciar sesion</string>
+    <string name="register">registrarse</string>
+
+
+
+</resources>
