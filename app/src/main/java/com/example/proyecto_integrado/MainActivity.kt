@@ -154,12 +154,15 @@ class MainActivity : ComponentActivity() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                //TODO quitar logout y hacer intent registro
-                Toast.makeText(context, "cambiar boton registro", Toast.LENGTH_SHORT).show()
-                mauth.signOut()
-                googleSignInClient.revokeAccess()
+                val intent = Intent(this@MainActivity, Register::class.java)
+                startActivity(intent)
             })
             { Text(getString(R.string.register)) }
+
+            Button(onClick = {
+                mauth.signOut()
+                googleSignInClient.revokeAccess()
+            }){ Text("su puta madre") }
         }
     }
 

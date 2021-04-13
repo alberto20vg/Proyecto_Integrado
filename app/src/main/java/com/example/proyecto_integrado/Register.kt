@@ -1,6 +1,9 @@
 package com.example.proyecto_integrado
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,12 +22,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class Register : ComponentActivity() {
     val RC_SIGN_IN = 1664
     private var mauth = Firebase.auth
     private lateinit var googleSignInClient: GoogleSignInClient
+    val db = Firebase.firestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -67,25 +73,12 @@ class Register : ComponentActivity() {
 
 
             var error by remember { mutableStateOf(false) }
-            val name = remember { mutableStateOf(TextFieldValue("")) }
             val user = remember { mutableStateOf(TextFieldValue("")) }
             val email = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
             val repeat_password = remember { mutableStateOf(TextFieldValue("")) }
 
 
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                value = name.value,
-                isError = error,
-                onValueChange = {
-                    name.value = it
-                    error = false
-                },
-                label = { Text(getString(R.string.name)) })
-            Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -135,23 +128,60 @@ class Register : ComponentActivity() {
                 label = { Text(getString(R.string.repeat_password)) })
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
-                //TODO quitar logout y hacer intent registro
-                Toast.makeText(context, "cambiar boton registrase", Toast.LENGTH_SHORT).show()
+                if (user.value.text.length != 0 && email.value.text.length != 0 && password.value.text.length != 0 && repeat_password.value.text.length != 0) {
+                    if (password.equals(repeat_password)) {
+                        mauth.createUserWithEmailAndPassword(email.value.text, password.value.text)
+                            .addOnCompleteListener(this@Register) { task ->
+                                if (task.isSuccessful) {
+                                    // Sign in success, update UI with the signed-in user's information
 
-                mauth.createUserWithEmailAndPassword(email.value.text, password.value.text)
-                    .addOnCompleteListener(this@Register) { task ->
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
+                                    val userId = mauth.currentUser.uid
 
-                            val user = mauth.currentUser
+                                    Handler().postDelayed(Runnable {
+                                        val data = hashMapOf(
+                                            "user" to user.value.text,
+                                            "userId" to userId,
+                                            "photo" to "vacia"
+                                        )
 
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(baseContext, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show()
+                                        db.collection("users")
+                                            .add(data)
+                                            .addOnSuccessListener { documentReference ->
+                                                Log.d(
+                                                    TAG,
+                                                    "DocumentSnapshot written with ID: ${documentReference.id}"
+                                                )
+                                            }
+                                            .addOnFailureListener { e ->
+                                                Log.w(TAG, "Error adding document", e)
+                                            }
+                                    }, 500)
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Toast.makeText(
+                                        baseContext, R.string.authentication_failed,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    error = true
 
-                        }
+                                }
+                            }
+                    } else {
+                        Toast.makeText(
+                            baseContext, R.string.wrong_password,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        error = true
                     }
+                } else {
+                    Toast.makeText(
+                        baseContext, R.string.empty_data,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    error = true
+                }
+
+
             }) { Text(getString(R.string.register)) }
         }
     }

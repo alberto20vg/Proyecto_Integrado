@@ -9,7 +9,8 @@
     <string name="name">nombre</string>
     <string name="email">correo</string>
     <string name="repeat_password">repetir contraseña</string>
-
     <string name="upload_potho">subir foto</string>
+    <string name="wrong_password">las contraseñas no coinciden</string>
+    <string name="empty_data">datos vacios</string>
 
 </resources>
