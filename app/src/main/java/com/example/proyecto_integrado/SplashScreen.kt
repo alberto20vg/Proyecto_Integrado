@@ -3,7 +3,6 @@ package com.example.proyecto_integrado
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -23,16 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-
-import com.google.firebase.auth.FirebaseUser
-import kotlin.coroutines.EmptyCoroutineContext
 
 
 class SplashScreen : ComponentActivity() {

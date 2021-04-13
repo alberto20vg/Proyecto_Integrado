@@ -22,6 +22,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -118,6 +120,7 @@ class MainActivity : ComponentActivity() {
         ) {
 
             Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = null)
+
             val email = remember { mutableStateOf(TextFieldValue("")) }
             val contrasena = remember { mutableStateOf(TextFieldValue("")) }
             var error by remember { mutableStateOf(false) }
@@ -155,9 +158,15 @@ class MainActivity : ComponentActivity() {
 
 
                 if (email.value.text.length == 0 || contrasena.value.text.length == 0) {
-                    Toast.makeText(baseContext, getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        baseContext,
+                        getString(R.string.authentication_failed),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     error = true
                 } else {
+
+
                     mauth.signInWithEmailAndPassword(email.value.text, contrasena.value.text)
                         .addOnCompleteListener(this@MainActivity) { task ->
                             if (task.isSuccessful) {
@@ -190,24 +199,27 @@ class MainActivity : ComponentActivity() {
                 val signInIntent = googleSignInClient.signInIntent
                 startActivityForResult(signInIntent, RC_SIGN_IN)
             }) {
-                Icon(painterResource(id = R.drawable.google_short_logo), contentDescription = "Google log/sign in")
+                Icon(
+                    painterResource(id = R.drawable.google_short_logo),
+                    contentDescription = "Google log/sign in"
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                //TODO quitar logout y hacer intent registro
-                Toast.makeText(context, "cambiar boton registro", Toast.LENGTH_SHORT).show()
-                mauth.signOut()
-                googleSignInClient.revokeAccess()
+                val intent = Intent(context, Register::class.java)
+
+                startActivity(intent)
+                finish()
             })
             { Text(getString(R.string.register)) }
 
         }
     }
 
-}
 
+}
 
 @Preview(showBackground = true)
 @Composable

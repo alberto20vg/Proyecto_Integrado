@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_Integrado">
         <activity android:name=".MainActivity"></activity>
+        <activity android:name=".Register"></activity>
         <activity
             android:name=".SplashScreen"
             android:exported="true"

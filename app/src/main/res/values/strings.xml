@@ -6,7 +6,10 @@
     <string name="authentication_sucess">Authentication sucess</string>
     <string name="log_in">iniciar sesion</string>
     <string name="register">registrarse</string>
+    <string name="name">nombre</string>
+    <string name="email">correo</string>
+    <string name="repeat_password">repetir contraseña</string>
 
-
+    <string name="upload_potho">subir foto</string>
 
 </resources>
