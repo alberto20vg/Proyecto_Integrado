@@ -38,7 +38,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 class SplashScreen : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
     val context = this
-
+    
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +49,8 @@ class SplashScreen : ComponentActivity() {
             handler.postDelayed(
                 {
                     val intent = Intent(this, MainActivity::class.java)
-
                     startActivity(intent)
                     finish()
-
-
                 }, 1000
             )
         }
