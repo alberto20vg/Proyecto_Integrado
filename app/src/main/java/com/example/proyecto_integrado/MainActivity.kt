@@ -22,8 +22,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -40,7 +38,7 @@ class MainActivity : ComponentActivity() {
     val RC_SIGN_IN = 1664
     private var mauth = Firebase.auth
     private lateinit var googleSignInClient: GoogleSignInClient
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -68,8 +66,8 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this, "oleeee", Toast.LENGTH_SHORT).show()
         }
     }
-    
-      @Composable
+
+    @Composable
     fun login() {
         mauth = Firebase.auth
         val context = LocalContext.current
@@ -81,11 +79,7 @@ class MainActivity : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = null)
-<<<<<<< HEAD
 
-=======
-            
->>>>>>> c0e2a451cc41a6b4a926cecb74ab2494be283727
             val email = remember { mutableStateOf(TextFieldValue("")) }
             val contrasena = remember { mutableStateOf(TextFieldValue("")) }
             var error by remember { mutableStateOf(false) }
@@ -121,15 +115,9 @@ class MainActivity : ComponentActivity() {
 
             Button(onClick = {
                 if (email.value.text.length == 0 || contrasena.value.text.length == 0) {
-                    Toast.makeText(
-                        baseContext,
-                        getString(R.string.authentication_failed),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(baseContext, getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show()
                     error = true
                 } else {
-
-
                     mauth.signInWithEmailAndPassword(email.value.text, contrasena.value.text)
                         .addOnCompleteListener(this@MainActivity) { task ->
                             if (task.isSuccessful) {
@@ -160,33 +148,21 @@ class MainActivity : ComponentActivity() {
                 val signInIntent = googleSignInClient.signInIntent
                 startActivityForResult(signInIntent, RC_SIGN_IN)
             }) {
-                Icon(
-                    painterResource(id = R.drawable.google_short_logo),
-                    contentDescription = "Google log/sign in"
-                )
+                Icon(painterResource(id = R.drawable.google_short_logo), contentDescription = "Google log/sign in")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                val intent = Intent(context, Register::class.java)
-
-                startActivity(intent)
-                finish()
+                //TODO quitar logout y hacer intent registro
+                Toast.makeText(context, "cambiar boton registro", Toast.LENGTH_SHORT).show()
+                mauth.signOut()
+                googleSignInClient.revokeAccess()
             })
             { Text(getString(R.string.register)) }
         }
     }
 
-<<<<<<< HEAD
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    Proyecto_IntegradoTheme {
-=======
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
@@ -202,7 +178,6 @@ fun DefaultPreview() {
             }
         }
     }
->>>>>>> c0e2a451cc41a6b4a926cecb74ab2494be283727
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
