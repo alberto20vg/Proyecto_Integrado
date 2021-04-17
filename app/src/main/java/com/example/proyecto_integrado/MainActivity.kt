@@ -28,7 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.GoogleAuthProvider
 
 class MainActivity : ComponentActivity() {
-
+    //variables necesarias para firebase
     val RC_SIGN_IN = 1664
     private var mauth = Firebase.auth
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -36,11 +36,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            //variables necesarias para firebase
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
-
             googleSignInClient = GoogleSignIn.getClient(this, gso)
 
             Proyecto_IntegradoTheme {
@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    //compruebo al principio si esta logeado
     override fun onStart() {
         super.onStart()
         val currentUser = mauth.currentUser
@@ -63,8 +64,6 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun login() {
-        mauth = Firebase.auth
-        val context = LocalContext.current
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,6 +71,7 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            //TODO poner icono de la aplicacion
             Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = null)
 
             val email = remember { mutableStateOf(TextFieldValue("")) }
@@ -108,15 +108,22 @@ class MainActivity : ComponentActivity() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                if (email.value.text.length == 0 || contrasena.value.text.length == 0) {
-                    Toast.makeText(baseContext, getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show()
+                var emailEmpty =email.value.text.length == 0
+                var passwordEmpty = contrasena.value.text.length == 0
+
+                if (emailEmpty || passwordEmpty) {
+                    Toast.makeText(
+                        baseContext,
+                        getString(R.string.authentication_failed),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     error = true
                 } else {
                     mauth.signInWithEmailAndPassword(email.value.text, contrasena.value.text)
                         .addOnCompleteListener(this@MainActivity) { task ->
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
-                                val user = mauth.currentUser
+                                //TODO meter intent a inicio
                                 Toast.makeText(
                                     baseContext,
                                     "Authentication funciona.",
@@ -142,7 +149,10 @@ class MainActivity : ComponentActivity() {
                 val signInIntent = googleSignInClient.signInIntent
                 startActivityForResult(signInIntent, RC_SIGN_IN)
             }) {
-                Icon(painterResource(id = R.drawable.google_short_logo), contentDescription = "Google log/sign in")
+                Icon(
+                    painterResource(id = R.drawable.google_short_logo),
+                    contentDescription = "Google log/sign in"
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -153,10 +163,12 @@ class MainActivity : ComponentActivity() {
             })
             { Text(getString(R.string.register)) }
 
+            //TODO quitar este boton cuando se cree la pantalla de ajuste
+            Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
                 mauth.signOut()
                 googleSignInClient.revokeAccess()
-            }){ Text("su puta madre") }
+            }) { Text("cerrar sesion") }
         }
     }
 
@@ -166,12 +178,11 @@ class MainActivity : ComponentActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 // Google Sign In was successful, authenticate with Firebase
+
                 val account = task.getResult(ApiException::class.java)!!
-                //TODO no se si poner algo aqui
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
-                //TODO no se si poner algo aqui
             }
         }
     }
@@ -182,11 +193,11 @@ class MainActivity : ComponentActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    //TODO no se si poner algo aqui
-                    val user = mauth.currentUser
+                    //TODO meter el cambio a la pantalla de incio
+                    Toast.makeText(this, "oleeee", Toast.LENGTH_SHORT).show()
+
                 } else {
                     // If sign in fails, display a message to the user.
-                    //TODO no se si poner algo aqui
                 }
             }
     }

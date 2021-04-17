@@ -15,7 +15,6 @@
             android:name=".Register"
             android:exported="true"></activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".Register" />
         <activity
             android:name=".SplashScreen"
             android:exported="true"

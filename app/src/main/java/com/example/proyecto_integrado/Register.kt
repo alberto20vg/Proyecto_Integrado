@@ -36,18 +36,17 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
 class Register : AppCompatActivity() {
-    val RC_SIGN_IN = 1664
     private var mauth = Firebase.auth
     private lateinit var googleSignInClient: GoogleSignInClient
-    val db = Firebase.firestore
-    val storage = Firebase.storage
-    var storageRef = storage.reference
-    val SELECT_ACTIVITY = 50
+    private val db = Firebase.firestore
+    private val storage = Firebase.storage
+    private var storageRef = storage.reference
+    private val SELECT_ACTIVITY = 50
     private var imageUri: Uri? = null
 
+    //recojo la uri de la imagen
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         when {
             requestCode == SELECT_ACTIVITY && resultCode == Activity.RESULT_OK -> {
                 imageUri = data!!.data
@@ -68,7 +67,6 @@ class Register : AppCompatActivity() {
                         .requestIdToken(getString(R.string.default_web_client_id))
                         .requestEmail()
                         .build()
-
                     googleSignInClient = GoogleSignIn.getClient(context, gso)
 
                     Column(
@@ -80,22 +78,16 @@ class Register : AppCompatActivity() {
                     ) {
 
                         Button(onClick = {
-                            //TODO hacer que se carge la imagen
-
-
                             ImageController.selectPhotoFromGallery(this@Register, SELECT_ACTIVITY)
-
                         }) { Text(getString(R.string.upload_potho)) }
 
                         Spacer(modifier = Modifier.height(16.dp))
-
 
                         var error by remember { mutableStateOf(false) }
                         val user = remember { mutableStateOf(TextFieldValue("")) }
                         val email = remember { mutableStateOf(TextFieldValue("")) }
                         val password = remember { mutableStateOf(TextFieldValue("")) }
-                        val repeat_password = remember { mutableStateOf(TextFieldValue("")) }
-
+                        val repeatPassword = remember { mutableStateOf(TextFieldValue("")) }
 
                         TextField(
                             modifier = Modifier
@@ -108,7 +100,9 @@ class Register : AppCompatActivity() {
                                 error = false
                             },
                             label = { Text(getString(R.string.user)) })
+
                         Spacer(modifier = Modifier.height(16.dp))
+
                         TextField(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -120,7 +114,9 @@ class Register : AppCompatActivity() {
                                 error = false
                             },
                             label = { Text(getString(R.string.email)) })
+
                         Spacer(modifier = Modifier.height(16.dp))
+
                         TextField(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -132,82 +128,74 @@ class Register : AppCompatActivity() {
                                 error = false
                             },
                             label = { Text(getString(R.string.password)) })
+
                         Spacer(modifier = Modifier.height(16.dp))
+
                         TextField(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
-                            value = repeat_password.value,
+                            value = repeatPassword.value,
                             isError = error,
                             onValueChange = {
-                                repeat_password.value = it
+                                repeatPassword.value = it
                                 error = false
                             },
                             label = { Text(getString(R.string.repeat_password)) })
+
                         Spacer(modifier = Modifier.height(16.dp))
+
                         Button(onClick = {
-                            if (user.value.text.length != 0 && email.value.text.length != 0 && password.value.text.length != 0 && repeat_password.value.text.length != 0) {
-                                if (password.value == repeat_password.value) {
+                            var isUserEmpty = user.value.text.isEmpty()
+                            var isEmailEmpty = email.value.text.isEmpty()
+                            var isPasswordEmpty = password.value.text.isEmpty()
+                            var isRepeatPasswordEmpty = repeatPassword.value.text.isEmpty()
+                            var passwordsMatch = password.value == repeatPassword.value
+
+                            if (isUserEmpty || isEmailEmpty || isPasswordEmpty || isRepeatPasswordEmpty) {
+                                Toast.makeText(
+                                    baseContext, R.string.authentication_failed,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                error = true
+                            } else {
+                                if (passwordsMatch) {
                                     mauth.createUserWithEmailAndPassword(
                                         email.value.text,
                                         password.value.text
-                                    )
-                                        .addOnCompleteListener(this@Register) { task ->
-                                            if (task.isSuccessful) {
-                                                // Sign in success, update UI with the signed-in user's information
+                                    ).addOnCompleteListener(this@Register) { task ->
+                                        if (task.isSuccessful) {
+                                            val userId = mauth.currentUser.uid
+                                            var file = imageUri
+                                            val riversRef = storageRef.child(userId)
+                                            var uploadTask = file?.let { riversRef.putFile(it) }
 
-                                                val userId = mauth.currentUser.uid
-
-                                                var file = imageUri
-                                                //Uri.fromFile(File("Internal storage/WhatsApp/Media/Whatsapp Images/IMG-20210413-WA0002.jpg"))
-                                                val riversRef = storageRef.child(userId)
-                                                var uploadTask = file?.let { riversRef.putFile(it) }
-
-                                                // Register observers to listen for when the download is done or if it fails
-                                                if (uploadTask != null) {
-                                                    uploadTask.addOnFailureListener {
-                                                        // Handle unsuccessful uploads
-                                                    }.addOnSuccessListener {
-                                                        // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-                                                        // ...
-                                                    }
-                                                }
-
-                                                Handler().postDelayed(Runnable {
-                                                    val data = hashMapOf(
-                                                        "user" to user.value.text,
-                                                        "userId" to userId,
-                                                        "photo" to userId
-                                                    )
-
-                                                    db.collection("users")
-                                                        .add(data)
-                                                        .addOnSuccessListener { documentReference ->
-                                                            Log.d(
-                                                                ContentValues.TAG,
-                                                                "DocumentSnapshot written with ID: ${documentReference.id}"
-                                                            )
-                                                        }
-                                                        .addOnFailureListener { e ->
-                                                            Log.w(
-                                                                ContentValues.TAG,
-                                                                "Error adding document",
-                                                                e
-                                                            )
-                                                        }
-                                                }, 500)
-
-
-                                            } else {
-                                                // If sign in fails, display a message to the user.
-                                                Toast.makeText(
-                                                    baseContext, R.string.authentication_failed,
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                error = true
-
+                                            uploadTask?.addOnFailureListener {
+                                            }?.addOnSuccessListener {
                                             }
+
+                                            Handler().postDelayed({
+                                                val data = hashMapOf(
+                                                    "user" to user.value.text,
+                                                    "userId" to userId,
+                                                    "photo" to userId
+                                                )
+
+                                                db.collection("users")
+                                                    .add(data)
+                                                    .addOnSuccessListener {
+                                                        //TODO hacer intent
+                                                    }
+                                                    .addOnFailureListener { e ->
+                                                        Log.w(
+                                                            ContentValues.TAG,
+                                                            "Error adding document", e
+                                                        )
+                                                    }
+                                            }, 500)
+
                                         }
+                                    }
                                 } else {
                                     Toast.makeText(
                                         baseContext, R.string.wrong_password,
@@ -215,30 +203,15 @@ class Register : AppCompatActivity() {
                                     ).show()
                                     error = true
                                 }
-                            } else {
-                                Toast.makeText(
-                                    baseContext, R.string.empty_data,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                error = true
                             }
-
-
                         }) { Text(getString(R.string.register)) }
                     }
                 }
             }
         }
-
-
     }
 
-    fun cargarImagen(url: String?) {
-        val image = findViewById<View>(R.id.imageView) as ImageView
-        Glide.with(this).load(url).into(image)
-    }
-
-    fun cargarImagen(url: Uri) {
+    private fun cargarImagen(url: Uri) {
         val image = findViewById<View>(R.id.imageView) as ImageView
         Glide.with(this).load(url).into(image)
     }
