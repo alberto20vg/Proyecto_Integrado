@@ -169,6 +169,11 @@ class MainActivity : ComponentActivity() {
                 mauth.signOut()
                 googleSignInClient.revokeAccess()
             }) { Text("cerrar sesion") }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                val intent = Intent(this@MainActivity, NavBar::class.java)
+                startActivity(intent)
+            }) { Text("cerrar sesion") }
         }
     }
 
