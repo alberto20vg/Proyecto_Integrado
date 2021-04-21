@@ -11,7 +11,10 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -35,7 +38,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
-class Register : AppCompatActivity() {
+class Register : ComponentActivity() {
     private var mauth = Firebase.auth
     private lateinit var googleSignInClient: GoogleSignInClient
     private val db = Firebase.firestore
@@ -184,7 +187,9 @@ class Register : AppCompatActivity() {
                                                 db.collection("users")
                                                     .add(data)
                                                     .addOnSuccessListener {
-                                                        //TODO hacer intent
+                                                        val intent = Intent(this@Register, NavBar::class.java)
+                                                        startActivity(intent)
+                                                        finish()
                                                     }
                                                     .addOnFailureListener { e ->
                                                         Log.w(

@@ -12,5 +12,9 @@
     <string name="upload_potho">subir foto</string>
     <string name="wrong_password">las contraseñas no coinciden</string>
     <string name="empty_data">datos vacios</string>
+    <string name="start">Inicio</string>
+    <string name="posts">Publicaciones</string>
+    <string name="settings">Ajustes</string>
+
 
 </resources>

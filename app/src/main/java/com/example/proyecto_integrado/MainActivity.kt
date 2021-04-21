@@ -6,13 +6,15 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -57,8 +59,9 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         val currentUser = mauth.currentUser
         if (currentUser != null) {
-            //TODO meter el cambio a la pantalla de incio
-            Toast.makeText(this, "oleeee", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this@MainActivity, NavBar::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
@@ -108,7 +111,7 @@ class MainActivity : ComponentActivity() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                var emailEmpty =email.value.text.length == 0
+                var emailEmpty = email.value.text.length == 0
                 var passwordEmpty = contrasena.value.text.length == 0
 
                 if (emailEmpty || passwordEmpty) {
@@ -123,12 +126,9 @@ class MainActivity : ComponentActivity() {
                         .addOnCompleteListener(this@MainActivity) { task ->
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
-                                //TODO meter intent a inicio
-                                Toast.makeText(
-                                    baseContext,
-                                    "Authentication funciona.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                val intent = Intent(this@MainActivity, NavBar::class.java)
+                                startActivity(intent)
+                                finish()
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Toast.makeText(
@@ -162,18 +162,6 @@ class MainActivity : ComponentActivity() {
                 startActivity(intent)
             })
             { Text(getString(R.string.register)) }
-
-            //TODO quitar este boton cuando se cree la pantalla de ajuste
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                mauth.signOut()
-                googleSignInClient.revokeAccess()
-            }) { Text("cerrar sesion") }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                val intent = Intent(this@MainActivity, NavBar::class.java)
-                startActivity(intent)
-            }) { Text("cerrar sesion") }
         }
     }
 
@@ -198,9 +186,9 @@ class MainActivity : ComponentActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    //TODO meter el cambio a la pantalla de incio
-                    Toast.makeText(this, "oleeee", Toast.LENGTH_SHORT).show()
-
+                    val intent = Intent(this@MainActivity, NavBar::class.java)
+                    startActivity(intent)
+                    finish()
                 } else {
                     // If sign in fails, display a message to the user.
                 }
