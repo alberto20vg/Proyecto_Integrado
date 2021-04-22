@@ -184,21 +184,9 @@ class Register : ComponentActivity() {
                                                     "photo" to userId
                                                 )
 
-                                                db.collection("users")
-                                                    .add(data)
-                                                    .addOnSuccessListener {
-                                                        val intent = Intent(this@Register, NavBar::class.java)
-                                                        startActivity(intent)
-                                                        finish()
-                                                    }
-                                                    .addOnFailureListener { e ->
-                                                        Log.w(
-                                                            ContentValues.TAG,
-                                                            "Error adding document", e
-                                                        )
-                                                    }
+                                                db.collection("users").document(userId).set(data)
                                             }, 500)
-
+                                    //TODO meter intent a inicio
                                         }
                                     }
                                 } else {
