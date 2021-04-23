@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,15 +17,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
 import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.example.proyecto_integrado.ui.theme.Teal200
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -54,10 +49,12 @@ class NavBar : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
+            //usado por settings
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
+
             googleSignInClient = GoogleSignIn.getClient(this, gso)
 
             val docRef = db.collection("users").document(user.uid)
@@ -66,33 +63,26 @@ class NavBar : ComponentActivity() {
                 .addOnSuccessListener { document ->
                     if (document != null) {
                         nombreUsuario = document.getString("user").toString()
-                    } else {
-
                     }
-                }
-                .addOnFailureListener { exception ->
+                }.addOnFailureListener {}
 
-                }
             storageRef.child(user.uid).downloadUrl.addOnSuccessListener {
                 // Got the download URL for 'users/me/profile.png'
                 urlPhoto = it.toString()
             }.addOnFailureListener {
-                // Handle any errors
             }
+            //---usado por settings---
 
             Proyecto_IntegradoTheme {
+
                 val navController = rememberNavController()
-                val title = remember { mutableStateOf("Account") }
 
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     Scaffold(
                         topBar = {
-
                         },
-
                         bottomBar = {
-
                             val items = listOf(
                                 Screen.Account,
                                 Screen.DateRange,
@@ -120,7 +110,7 @@ class NavBar : ComponentActivity() {
                             }
                         }
                     ) {
-                        ScreenController(navController, title)
+                        ScreenController(navController)
                     }
                 }
             }
@@ -128,8 +118,10 @@ class NavBar : ComponentActivity() {
     }
 
     @Composable
-    fun ScreenController(navController: NavHostController, topBarTitle: MutableState<String>) {
+    fun ScreenController(navController: NavHostController) {
+
         NavHost(navController = navController, startDestination = "inicio") {
+
             composable("inicio") {
                 StartScreen()
             }
@@ -168,32 +160,37 @@ class NavBar : ComponentActivity() {
 
     @Composable
     fun SettingsScreen() {
-        var context = LocalContext.current
+
+        val context = LocalContext.current
         val checkedState1 = remember { mutableStateOf(false) }
         val checkedState2 = remember { mutableStateOf(false) }
-
-
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
         ) {
+
             Text(
-                //TODO añadir string
-                text = "Cuenta",
+                text = getString(R.string.account),
                 style = TextStyle(color = Color.Black, fontSize = 36.sp),
                 textAlign = TextAlign.Left,
                 modifier = Modifier.padding(16.dp)
             )
+
             Divider(color = Color.Black, thickness = 1.dp)
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)
             ) {
-            //TODO no consigo que la foto salga segun si es google o firebase
+
                 CoilImage(
-                    data = /* urlPhoto */ user.photoUrl,
+                    data = if (user.providerData[1].providerId == "google.com") {
+                        user.photoUrl
+                    } else {
+                        urlPhoto
+                    },
                     contentDescription = "android",
                     alignment = Alignment.TopCenter,
                     modifier = Modifier
@@ -219,7 +216,9 @@ class NavBar : ComponentActivity() {
                         )
                     }
                 )
+
                 Column {
+
                     Text(
                         text = user.email,
                         style = TextStyle(color = Color.Black),
@@ -228,18 +227,20 @@ class NavBar : ComponentActivity() {
                     )
 
                     Text(
-                        //TODO usar firebase
-
-                        text = /* nombreUsuario */ user.displayName,
+                        text = if (user.providerData[1].providerId == "google.com") {
+                            user.displayName
+                        } else {
+                            nombreUsuario
+                        },
                         style = TextStyle(color = Color.Black),
                         textAlign = TextAlign.Left,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
-
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
             Button(modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
@@ -263,20 +264,21 @@ class NavBar : ComponentActivity() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                //TODO añadir string
-                text = "Notificaciones",
+                text = getString(R.string.notifications),
                 style = TextStyle(color = Color.Black, fontSize = 36.sp),
                 textAlign = TextAlign.Left,
                 modifier = Modifier.padding(16.dp)
             )
+
             Divider(color = Color.Black, thickness = 1.dp)
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)
             ) {
+
                 Text(
-                    //TODO añadir string
-                    text = "Comentan en un post",
+                    text = getString(R.string.push_notifications_1),
                     style = TextStyle(color = Color.Black),
                     textAlign = TextAlign.Left,
                     modifier = Modifier.padding(16.dp)
@@ -296,13 +298,14 @@ class NavBar : ComponentActivity() {
                     }
                 )
             }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)
             ) {
+
                 Text(
-                    //TODO añadir string
-                    text = "Dan like a un post",
+                    text = getString(R.string.push_notifications_2),
                     style = TextStyle(color = Color.Black),
                     textAlign = TextAlign.Left,
                     modifier = Modifier.padding(16.dp)
@@ -324,8 +327,4 @@ class NavBar : ComponentActivity() {
             }
         }
     }
-
 }
-
-
-

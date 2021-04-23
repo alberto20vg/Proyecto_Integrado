@@ -15,6 +15,10 @@
     <string name="start">Inicio</string>
     <string name="posts">Publicaciones</string>
     <string name="settings">Ajustes</string>
+    <string name="account">Cuenta</string>
+    <string name="notifications">Notificaciones</string>
+    <string name="push_notifications_1">Comentan en un post</string>
+    <string name="push_notifications_2">Dan like a un post</string>
 
 
 </resources>

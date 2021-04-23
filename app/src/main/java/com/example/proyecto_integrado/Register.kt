@@ -186,7 +186,11 @@ class Register : ComponentActivity() {
 
                                                 db.collection("users").document(userId).set(data)
                                             }, 500)
-                                    //TODO meter intent a inicio
+
+                                            //TODO revisar que aqui funcione bien el intent
+                                            val intent = Intent(context, NavBar::class.java)
+                                            startActivity(intent)
+                                            finish()
                                         }
                                     }
                                 } else {
