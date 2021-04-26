@@ -7,6 +7,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
 
     object Account : Screen("inicio", "", Icons.Default.Home)
-    object DateRange : Screen("posts", "", Icons.Default.DateRange)
+    object DateRange : Screen("com/example/proyecto_integrado/posts", "", Icons.Default.DateRange)
     object Edit : Screen("ajustes", "", Icons.Default.Settings)
 }

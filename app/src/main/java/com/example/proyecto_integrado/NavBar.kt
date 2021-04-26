@@ -43,7 +43,7 @@ var nombreUsuario = ""
 var urlPhoto = ""
 private val storageRef = Firebase.storage.reference
 
-class NavBar : ComponentActivity() {
+class NavBar: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +72,7 @@ class NavBar : ComponentActivity() {
             }.addOnFailureListener {
             }
             //---usado por settings---
+
 
             Proyecto_IntegradoTheme {
 
@@ -126,7 +127,7 @@ class NavBar : ComponentActivity() {
                 StartScreen()
             }
 
-            composable("posts") {
+            composable("com/example/proyecto_integrado/posts") {
                 PostsScreen()
             }
 
@@ -138,13 +139,12 @@ class NavBar : ComponentActivity() {
 
     @Composable
     fun StartScreen() {
-        Text(
-            text = "Account",
-            style = TextStyle(fontSize = 36.sp),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxSize()
-        )
+        //TODO aqui deberia estar el recycler
+        val context = LocalContext.current
+        Button(onClick = { }) {
+           // val intent = Intent(context, PostsActivity::class.java)
+           // startActivity(intent)
+        }
     }
 
     @Composable
