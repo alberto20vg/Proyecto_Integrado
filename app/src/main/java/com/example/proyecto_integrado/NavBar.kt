@@ -2,6 +2,7 @@ package com.example.proyecto_integrado
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dev.chrisbanes.accompanist.coil.CoilImage
+import java.util.concurrent.TimeUnit
 
 
 private var mauth = Firebase.auth
@@ -42,8 +44,8 @@ var user = mauth.currentUser
 var nombreUsuario = ""
 var urlPhoto = ""
 private val storageRef = Firebase.storage.reference
-
-class NavBar: ComponentActivity() {
+var listaPrueba: MutableList<Recipe> = mutableListOf()
+class NavBar : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +74,27 @@ class NavBar: ComponentActivity() {
             }.addOnFailureListener {
             }
             //---usado por settings---
+
+
+
+
+            val docRef2 = db.collection("posts")
+            docRef2
+                .get()
+                .addOnSuccessListener { document ->
+                    for (i in document) {
+                        var aux = Recipe(
+                            i.getString("prueba1").toString(),
+                            i.getString("prueba2").toString()
+                        )
+                        listaPrueba.add(aux)
+                        //    Toast.makeText(this, i.getString("funciona").toString(), Toast.LENGTH_SHORT).show()
+                    }
+
+                }.addOnFailureListener {
+                    Toast.makeText(this, "Notificación corta", Toast.LENGTH_SHORT).show()
+                }
+
 
 
             Proyecto_IntegradoTheme {
@@ -139,13 +162,12 @@ class NavBar: ComponentActivity() {
 
     @Composable
     fun StartScreen() {
-        //TODO aqui deberia estar el recycler
+        //TODO no se carga la primera vez que se ve y deberia poner para que se refresque en tiempo real y se pare si la pantalla se quita
         val context = LocalContext.current
-        Button(onClick = { }) {
-           // val intent = Intent(context, PostsActivity::class.java)
-           // startActivity(intent)
-        }
+
+        RecipeColumnListDemo(listaPrueba)
     }
+
 
     @Composable
     fun PostsScreen() {
@@ -160,7 +182,7 @@ class NavBar: ComponentActivity() {
 
     @Composable
     fun SettingsScreen() {
-
+//TODO deberia poder llamar aqui a un metodo en otra clase
         val context = LocalContext.current
         val checkedState1 = remember { mutableStateOf(false) }
         val checkedState2 = remember { mutableStateOf(false) }
