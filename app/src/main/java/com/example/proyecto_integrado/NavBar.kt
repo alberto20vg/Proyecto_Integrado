@@ -2,7 +2,6 @@ package com.example.proyecto_integrado
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,18 +33,24 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dev.chrisbanes.accompanist.coil.CoilImage
-import java.util.concurrent.TimeUnit
 
 
 private var mauth = Firebase.auth
 private lateinit var googleSignInClient: GoogleSignInClient
 private val db = Firebase.firestore
-var user = mauth.currentUser
-var nombreUsuario = ""
-var urlPhoto = ""
+private var user = mauth.currentUser
+private var nombreUsuario = ""
+private var urlPhoto = ""
 private val storageRef = Firebase.storage.reference
-var listaPrueba: MutableList<Recipe> = mutableListOf()
+//TODO hacer privada cuando modifique las listas de la clase posts
+ var listaInicio: MutableList<Carta> = mutableListOf()
+
 class NavBar : ComponentActivity() {
+
+    override fun onStart() {
+        super.onStart()
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,25 +81,29 @@ class NavBar : ComponentActivity() {
             //---usado por settings---
 
 
-
-
+            //usado por inicio
             val docRef2 = db.collection("posts")
             docRef2
                 .get()
                 .addOnSuccessListener { document ->
                     for (i in document) {
-                        var aux = Recipe(
-                            i.getString("prueba1").toString(),
-                            i.getString("prueba2").toString()
-                        )
-                        listaPrueba.add(aux)
-                        //    Toast.makeText(this, i.getString("funciona").toString(), Toast.LENGTH_SHORT).show()
+                        var aux = i.getString("autor")?.let {
+                            Carta(
+                                it,
+                                i.getString("nombreJuego")!!,
+                                i.getString("titulo")!!,
+                                i.getString("urlPhotoJuego")!!
+                            )
+                        }
+                        if (aux != null) {
+                            listaInicio.add(aux)
+                        }
                     }
 
                 }.addOnFailureListener {
                     Toast.makeText(this, "Notificación corta", Toast.LENGTH_SHORT).show()
                 }
-
+            //---usado por inicio---
 
 
             Proyecto_IntegradoTheme {
@@ -164,20 +173,14 @@ class NavBar : ComponentActivity() {
     fun StartScreen() {
         //TODO no se carga la primera vez que se ve y deberia poner para que se refresque en tiempo real y se pare si la pantalla se quita
         val context = LocalContext.current
+        RecyclerView(listaInicio)
 
-        RecipeColumnListDemo(listaPrueba)
     }
 
 
     @Composable
     fun PostsScreen() {
-        Text(
-            text = "Date",
-            style = TextStyle(fontSize = 36.sp),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxSize()
-        )
+        ToolbarDemo()
     }
 
     @Composable
