@@ -1,10 +1,6 @@
 package com.example.proyecto_integrado
 
 import android.widget.Toast
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.expandVertically
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -12,15 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-import java.lang.reflect.Modifier
 
 @Composable
 fun ToolbarDemo() {
     val navController = rememberNavController()
-
     // A surface container using the 'background' color from the theme
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(
@@ -35,7 +28,6 @@ fun ToolbarDemo() {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute =
                         navBackStackEntry?.arguments?.getString(KEY_ROUTE)
-
                     items.forEach {
                         BottomNavigationItem(
                             icon = { Icon(it.icon, contentDescription = "") },
@@ -70,7 +62,6 @@ fun ScreenController(navController: NavHostController) {
         composable("favourites") {
             FavouritesScreen()
         }
-
     }
 }
 
@@ -94,11 +85,11 @@ fun MisPostScreen() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+                //TODO buscar si puedo poner un modificador para que salga bien el fabButton
                 //   , modifier = Modifier.padding(expandVertically(16.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Localized description")
             }
-
         }
     ) { RecyclerView(listaInicio) }
 }

@@ -43,7 +43,7 @@ private var nombreUsuario = ""
 private var urlPhoto = ""
 private val storageRef = Firebase.storage.reference
 //TODO hacer privada cuando modifique las listas de la clase posts
- var listaInicio: MutableList<Carta> = mutableListOf()
+var listaInicio: MutableList<Carta> = mutableListOf()
 
 class NavBar : ComponentActivity() {
 
@@ -87,7 +87,7 @@ class NavBar : ComponentActivity() {
                 .get()
                 .addOnSuccessListener { document ->
                     for (i in document) {
-                        var aux = i.getString("autor")?.let {
+                        val aux = i.getString("autor")?.let {
                             Carta(
                                 it,
                                 i.getString("nombreJuego")!!,
@@ -172,7 +172,6 @@ class NavBar : ComponentActivity() {
     @Composable
     fun StartScreen() {
         //TODO no se carga la primera vez que se ve y deberia poner para que se refresque en tiempo real y se pare si la pantalla se quita
-        val context = LocalContext.current
         RecyclerView(listaInicio)
 
     }
@@ -351,5 +350,5 @@ class NavBar : ComponentActivity() {
                 )
             }
         }
-    }
+    }//TODO aqui termina el settings
 }

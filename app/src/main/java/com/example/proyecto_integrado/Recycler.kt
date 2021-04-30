@@ -1,9 +1,6 @@
 package com.example.proyecto_integrado
 
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,15 +26,6 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 private val storageRef = Firebase.storage.reference
 private var urlPhoto = ""
 
-class Prueba : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-
-        }
-    }
-}
-
 data class Carta(
     val idAutor: String,
     val nombreJuego: String,
@@ -55,23 +43,25 @@ private fun RecipeCard(carta: Carta) {
         urlPhoto = it.toString()
     }.addOnFailureListener {
     }
+
     Card(
         shape = RoundedCornerShape(8.dp), elevation = 8.dp, modifier = Modifier
             .padding(8.dp)
             .clickable(onClick = {
 
                 //TODO   intent.putExtra("usuario", carta.idAutor);
-
                 Toast
                     .makeText(context, "Notificación corta", Toast.LENGTH_SHORT)
                     .show()
             })
     ) {
+
         Row(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(), horizontalArrangement = Arrangement.Center
         ) {
+
             CoilImage(
                 data = urlPhoto,
                 contentDescription = "juego",
@@ -98,6 +88,7 @@ private fun RecipeCard(carta: Carta) {
                     )
                 }
             )
+
             Column(
                 modifier = Modifier
                     .width(150.dp)
@@ -111,8 +102,8 @@ private fun RecipeCard(carta: Carta) {
                 Spacer(modifier = Modifier.padding(5.dp))
 
                 Text(text = carta.nombreJuego, style = typography.h6)
-
             }
+
             Column(
                 modifier = Modifier
                     .height(150.dp)
