@@ -16,7 +16,7 @@
             android:exported="true"></activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".NavBar" />
-        <activity android:name=".Prueba" />
+        <activity android:name=".CrearPost" />
         <activity
             android:name=".SplashScreen"
             android:exported="true"

@@ -27,10 +27,11 @@ private val storageRef = Firebase.storage.reference
 private var urlPhoto = ""
 
 data class Carta(
-    val idAutor: String,
     val nombreJuego: String,
     val titulo: String,
-    val urlJuego: String
+    val urlJuego: String,
+    var urlUser:String,
+    var nameUser:String
 )
 
 @Composable
@@ -111,7 +112,7 @@ private fun RecipeCard(carta: Carta) {
             ) {
 
                 CoilImage(
-                    data = "url de autor",
+                    data = carta.urlUser,
                     contentDescription = "android",
                     alignment = Alignment.TopCenter,
                     modifier = Modifier
@@ -137,7 +138,7 @@ private fun RecipeCard(carta: Carta) {
                         )
                     }
                 )
-                Text(text = "nombre del usuario", style = typography.subtitle1)
+                Text(text = carta.nameUser, style = typography.subtitle1)
             }
         }
     }

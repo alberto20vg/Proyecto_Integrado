@@ -10,6 +10,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
@@ -42,15 +45,11 @@ private var user = mauth.currentUser
 private var nombreUsuario = ""
 private var urlPhoto = ""
 private val storageRef = Firebase.storage.reference
+
 //TODO hacer privada cuando modifique las listas de la clase posts
 var listaInicio: MutableList<Carta> = mutableListOf()
 
 class NavBar : ComponentActivity() {
-
-    override fun onStart() {
-        super.onStart()
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,14 +86,15 @@ class NavBar : ComponentActivity() {
                 .get()
                 .addOnSuccessListener { document ->
                     for (i in document) {
-                        val aux = i.getString("autor")?.let {
+                        val aux =
                             Carta(
-                                it,
                                 i.getString("nombreJuego")!!,
                                 i.getString("titulo")!!,
-                                i.getString("urlPhotoJuego")!!
+                                i.getString("urlPhotoJuego")!!,
+                                i.getString("urlPhotoUser")!!,
+                                i.getString("userName")!!
                             )
-                        }
+
                         if (aux != null) {
                             listaInicio.add(aux)
                         }
@@ -176,10 +176,84 @@ class NavBar : ComponentActivity() {
 
     }
 
-
     @Composable
     fun PostsScreen() {
-        ToolbarDemo()
+        val navController = rememberNavController()
+        // A surface container using the 'background' color from the theme
+        Surface(color = MaterialTheme.colors.background) {
+            Scaffold(
+                bottomBar = {
+                },
+                topBar = {
+                    val items = listOf(
+                        Screen.MisPosts,
+                        Screen.favourites,
+                    )
+                    BottomNavigation {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentRoute =
+                            navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+                        items.forEach {
+                            BottomNavigationItem(
+                                icon = { Icon(it.icon, contentDescription = "") },
+                                selected = currentRoute == it.route,
+                                label = { Text(text = it.label) },
+                                onClick = {
+                                    navController.popBackStack(
+                                        navController.graph.startDestination, false
+                                    )
+                                    if (currentRoute != it.route) {
+                                        navController.navigate(it.route)
+                                    }
+                                })
+                        }
+                    }
+                }
+            ) {
+                ScreenController2(navController)
+            }
+        }
+    }
+
+    @Composable
+    fun ScreenController2(navController: NavHostController) {
+
+        NavHost(navController = navController, startDestination = "misPosts") {
+
+            composable("misPosts") {
+                MisPostScreen()
+            }
+
+            composable("favourites") {
+                FavouritesScreen()
+            }
+        }
+    }
+
+    @Composable
+    fun FavouritesScreen() {
+        RecyclerView(listaInicio)
+    }
+
+    @Composable
+    fun MisPostScreen() {
+        val context = LocalContext.current
+        Scaffold(
+            backgroundColor = Color(0xFFFEFEFA),
+            floatingActionButtonPosition = FabPosition.End,
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        val intent = Intent(context, CrearPost::class.java)
+                        startActivity(intent)
+                    }
+                    //TODO buscar si puedo poner un modificador para que salga bien el fabButton
+                    //   , modifier = Modifier.padding(expandVertically(16.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Localized description")
+                }
+            }
+        ) { RecyclerView(listaInicio) }
     }
 
     @Composable
@@ -274,6 +348,7 @@ class NavBar : ComponentActivity() {
                     val intent = Intent(context, MainActivity::class.java)
                     startActivity(intent)
                     finish()
+                    //TODO Sigue guardando las variables anteriores poner a null
                 }) { Text("cerrar sesion") }
 
             //TODO no me lo pone blanco DIVIDER
