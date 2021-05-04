@@ -1,5 +1,6 @@
 package com.example.proyecto_integrado
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -170,7 +171,7 @@ class CrearPost : ComponentActivity() {
             Button(onClick = {
                 //TODO hacer intent para añadir un nuevo juego
 
-                //  val intent = Intent(this@CrearPost, AnadirJuego::class.java)
+                val intent = Intent(this@CrearPost, AnadirJuego::class.java)
                 startActivity(intent)
             })
             {
