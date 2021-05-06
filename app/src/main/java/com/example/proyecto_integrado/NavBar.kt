@@ -6,9 +6,13 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -44,6 +48,7 @@ private val db = Firebase.firestore
 private var user = mauth.currentUser
 private var nombreUsuario = ""
 private var urlPhoto = ""
+private var urlPhoto2 = ""
 private val storageRef = Firebase.storage.reference
 
 //TODO hacer privada cuando modifique las listas de la clase posts
@@ -74,7 +79,7 @@ class NavBar : ComponentActivity() {
 
             storageRef.child(user.uid).downloadUrl.addOnSuccessListener {
                 // Got the download URL for 'users/me/profile.png'
-                urlPhoto = it.toString()
+                urlPhoto2 = it.toString()
             }.addOnFailureListener {
             }
             //---usado por settings---
@@ -86,8 +91,10 @@ class NavBar : ComponentActivity() {
                 .get()
                 .addOnSuccessListener { document ->
                     for (i in document) {
+
                         val aux =
                             Carta(
+                                i.id,
                                 i.getString("nombreJuego")!!,
                                 i.getString("titulo")!!,
                                 i.getString("urlPhotoJuego")!!,
@@ -257,6 +264,123 @@ class NavBar : ComponentActivity() {
     }
 
     @Composable
+    private fun RecipeCard(carta: Carta) {
+        val context = LocalContext.current
+
+        storageRef.child(carta.urlJuego).downloadUrl.addOnSuccessListener {
+            urlPhoto = it.toString()
+        }.addOnFailureListener {
+        }
+
+        Card(
+            shape = RoundedCornerShape(8.dp), elevation = 8.dp, modifier = Modifier
+                .padding(8.dp)
+                .clickable(onClick = {
+
+                    val intent = Intent(context, VistaPost::class.java)
+                    intent.putExtra("idPost", carta.idPost);
+                    startActivity(intent)
+                })
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            ) {
+
+                CoilImage(
+                    data = urlPhoto,
+                    contentDescription = "juego",
+                    alignment = Alignment.TopCenter,
+                    modifier = Modifier
+                        .height(150.dp)
+                        .width(100.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
+                    loading = {
+                        Box(
+                            modifier = Modifier.background(
+                                shape = CircleShape,
+                                color = Teal200
+                            )
+                        )
+                    },
+                    error = {
+                        Box(
+                            modifier = Modifier.background(
+                                shape = CircleShape,
+                                color = Teal200
+                            )
+                        )
+                    }
+                )
+
+                Column(
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(100.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                    Text(text = carta.titulo, style = MaterialTheme.typography.h6)
+
+                    Spacer(modifier = Modifier.padding(5.dp))
+
+                    Text(text = carta.nombreJuego, style = MaterialTheme.typography.h6)
+                }
+
+                Column(
+                    modifier = Modifier
+                        .height(150.dp)
+                        .width(70.dp)
+                ) {
+
+                    CoilImage(
+                        data = carta.urlUser,
+                        contentDescription = "android",
+                        alignment = Alignment.TopCenter,
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .height(50.dp)
+                            .width(50.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop,
+                        loading = {
+                            Box(
+                                modifier = Modifier.background(
+                                    shape = CircleShape,
+                                    color = Teal200
+                                )
+                            )
+                        },
+                        error = {
+                            Box(
+                                modifier = Modifier.background(
+                                    shape = CircleShape,
+                                    color = Teal200
+                                )
+                            )
+                        }
+                    )
+                    Text(text = carta.nameUser, style = MaterialTheme.typography.subtitle1)
+                }
+            }
+        }
+
+    }
+
+    @Composable
+    fun RecyclerView(lista: List<Carta>) {
+        LazyColumn {
+            items(lista) { recipe ->
+                RecipeCard(recipe)
+            }
+        }
+    }
+
+    @Composable
     fun SettingsScreen() {
 //TODO deberia poder llamar aqui a un metodo en otra clase
         val context = LocalContext.current
@@ -287,7 +411,7 @@ class NavBar : ComponentActivity() {
                     data = if (user.providerData[1].providerId == "google.com") {
                         user.photoUrl
                     } else {
-                        urlPhoto
+                        urlPhoto2
                     },
                     contentDescription = "android",
                     alignment = Alignment.TopCenter,

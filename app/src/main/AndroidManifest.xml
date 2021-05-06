@@ -18,6 +18,7 @@
         <activity android:name=".NavBar" />
         <activity android:name=".CrearPost" />
         <activity android:name=".AnadirJuego" />
+        <activity android:name=".VistaPost" />
         <activity
             android:name=".SplashScreen"
             android:exported="true"
