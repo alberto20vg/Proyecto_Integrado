@@ -473,6 +473,7 @@ class NavBar : ComponentActivity() {
                     startActivity(intent)
                     finish()
                     //TODO Sigue guardando las variables anteriores poner a null
+                    //TODO poner string
                 }) { Text("cerrar sesion") }
 
             //TODO no me lo pone blanco DIVIDER
