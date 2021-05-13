@@ -144,16 +144,17 @@ class MainActivity : ComponentActivity() {
             { Text(getString(R.string.log_in)) }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            IconButton(onClick = {
-                val signInIntent = googleSignInClient.signInIntent
-                startActivityForResult(signInIntent, RC_SIGN_IN)
-            }) {
-                Icon(
-                    painterResource(id = R.drawable.google_short_logo),
-                    contentDescription = "Google log/sign in"
-                )
-            }
+            Image(
+                painter = painterResource(id = R.drawable.google_short_logo),
+                contentDescription = "",
+                modifier = Modifier
+                    .height(60.dp)
+                    .width(60.dp)
+                    .clickable(onClick = {
+                        val signInIntent = googleSignInClient.signInIntent
+                        startActivityForResult(signInIntent, RC_SIGN_IN)
+                    })
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 

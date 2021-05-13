@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import com.example.proyecto_integrado.Components.Main
 import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.example.proyecto_integrado.ui.theme.Teal200
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -189,6 +191,9 @@ class NavBar : ComponentActivity() {
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
             Scaffold(
+                Modifier
+                    .focusModifier()
+                    .fillMaxHeight(0.94f),
                 bottomBar = {
                 },
                 topBar = {
@@ -296,12 +301,11 @@ class NavBar : ComponentActivity() {
                     modifier = Modifier
                         .height(150.dp)
                         .width(100.dp)
-                        .clip(CircleShape),
+                        .clip(RoundedCornerShape(10.dp)),
                     contentScale = ContentScale.Crop,
                     loading = {
                         Box(
                             modifier = Modifier.background(
-                                shape = CircleShape,
                                 color = Teal200
                             )
                         )
@@ -309,7 +313,6 @@ class NavBar : ComponentActivity() {
                     error = {
                         Box(
                             modifier = Modifier.background(
-                                shape = CircleShape,
                                 color = Teal200
                             )
                         )
@@ -319,9 +322,9 @@ class NavBar : ComponentActivity() {
                 Column(
                     modifier = Modifier
                         .width(150.dp)
-                        .height(100.dp),
+                        .height(100.dp)
+                        .align(Alignment.CenterVertically),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
                 ) {
 
                     Text(text = carta.titulo, style = MaterialTheme.typography.h6)
@@ -340,7 +343,7 @@ class NavBar : ComponentActivity() {
                     CoilImage(
                         data = carta.urlUser,
                         contentDescription = "android",
-                        alignment = Alignment.TopCenter,
+                        alignment = Alignment.BottomCenter,
                         modifier = Modifier
                             .padding(16.dp)
                             .height(50.dp)
@@ -364,7 +367,11 @@ class NavBar : ComponentActivity() {
                             )
                         }
                     )
-                    Text(text = carta.nameUser, style = MaterialTheme.typography.subtitle1)
+                    Text(
+                        text = carta.nameUser,
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+                    )
                 }
             }
         }
@@ -475,6 +482,15 @@ class NavBar : ComponentActivity() {
                     //TODO Sigue guardando las variables anteriores poner a null
                     //TODO poner string
                 }) { Text("cerrar sesion") }
+            Button(modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+                onClick = {
+
+                    val intent = Intent(context, Main::class.java)
+                    startActivity(intent)
+
+                }) { Text("prueba") }
 
             //TODO no me lo pone blanco DIVIDER
             Divider(

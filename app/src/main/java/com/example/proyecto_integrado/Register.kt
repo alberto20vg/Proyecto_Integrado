@@ -1,33 +1,35 @@
 package com.example.proyecto_integrado
 
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -59,6 +61,9 @@ class Register : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register).apply {
+
+            cargarImagen(R.drawable.delfaut_profile)
+
             findViewById<ComposeView>(R.id.compose_view).setContent {
                 // In Compose world
                 MaterialTheme {
@@ -73,7 +78,9 @@ class Register : ComponentActivity() {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .fillMaxHeight(),
+                            .fillMaxHeight()
+                            .verticalScroll(rememberScrollState())
+                        ,
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -127,7 +134,7 @@ class Register : ComponentActivity() {
                             onValueChange = {
                                 password.value = it
                                 error = false
-                            },
+                            }, visualTransformation = PasswordVisualTransformation(),
                             label = { Text(getString(R.string.password)) })
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -141,7 +148,7 @@ class Register : ComponentActivity() {
                             onValueChange = {
                                 repeatPassword.value = it
                                 error = false
-                            },
+                            }, visualTransformation = PasswordVisualTransformation(),
                             label = { Text(getString(R.string.repeat_password)) })
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -168,8 +175,8 @@ class Register : ComponentActivity() {
                                         if (task.isSuccessful) {
                                             val userId = mauth.currentUser.uid
                                             var file = imageUri
-                                            val riversRef = storageRef.child(userId)
-                                            var uploadTask = file?.let { riversRef.putFile(it) }
+                                            val imageRef = storageRef.child(userId)
+                                            var uploadTask = file?.let { imageRef.putFile(it) }
 
                                             uploadTask?.addOnFailureListener {
                                             }?.addOnSuccessListener {
@@ -208,7 +215,12 @@ class Register : ComponentActivity() {
 
     private fun cargarImagen(url: Uri) {
         val image = findViewById<View>(R.id.imageView) as ImageView
-        Glide.with(this).load(url).into(image)
+        Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(image)
+    }
+
+    private fun cargarImagen(url: Int) {
+        val image = findViewById<View>(R.id.imageView) as ImageView
+        Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(image)
     }
 
 }
