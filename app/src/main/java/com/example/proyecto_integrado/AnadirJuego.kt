@@ -47,7 +47,7 @@ class AnadirJuego : ComponentActivity() {
             requestCode == SELECT_ACTIVITY && resultCode == Activity.RESULT_OK -> {
                 imageUri = data!!.data
 
-              //  imageUri?.let { cargarImagen(it) }
+                //  imageUri?.let { cargarImagen(it) }
             }
         }
     }
@@ -136,9 +136,8 @@ class AnadirJuego : ComponentActivity() {
 
                 //TODO intent de vuelta
             }) { Text("Añadir Juego"
-               // getString(R.string.upload_potho)
+                // getString(R.string.upload_potho)
             ) }
-
         }
     }
 }

@@ -222,7 +222,5 @@ class Register : ComponentActivity() {
         val image = findViewById<View>(R.id.imageView) as ImageView
         Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(image)
     }
-
 }
-
 

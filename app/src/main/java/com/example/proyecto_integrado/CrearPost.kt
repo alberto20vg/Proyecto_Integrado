@@ -181,7 +181,5 @@ class CrearPost : ComponentActivity() {
                 )
             }
         }
-
-
     }
 }
