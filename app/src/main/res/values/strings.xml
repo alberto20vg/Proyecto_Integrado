@@ -17,6 +17,11 @@
     <string name="settings">Ajustes</string>
     <string name="account">Cuenta</string>
     <string name="notifications">Notificaciones</string>
+    <string name="add_game">Añadir Juego</string>
+    <string name="title">Título</string>
+    <string name="enter_text">Introduzca Texto</string>
+    <string name="post">Postear</string>
+    <string name="logout">Cerrar Sesion</string>
     <string name="push_notifications_1">Comentan en un post</string>
     <string name="push_notifications_2">Dan like a un post</string>
 

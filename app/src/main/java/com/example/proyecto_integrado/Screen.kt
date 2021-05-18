@@ -5,11 +5,10 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
-//TODO no puedo usar datos del resource string aqui
-    object Account : Screen("inicio", "", Icons.Default.Home)
-    object DateRange : Screen("com/example/proyecto_integrado/posts", "", Icons.Default.DateRange)
-    object Edit : Screen("ajustes", "", Icons.Default.Settings)
-    object MisPosts : Screen("misPosts", "", Icons.Default.Edit)
-    object favourites : Screen("favourites", "", Icons.Default.Star)
+    object Home : Screen("home", "", Icons.Default.Home)
+    object Posts : Screen("posts", "", Icons.Default.DateRange)
+    object Settings : Screen("settings", "", Icons.Default.Settings)
+    object MyPosts : Screen("myPosts", "", Icons.Default.Edit)
+    object Favourites : Screen("favourites", "", Icons.Default.Star)
 
 }

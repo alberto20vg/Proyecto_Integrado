@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,10 +27,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-import com.example.proyecto_integrado.Components.Main
+import com.example.proyecto_integrado.PostsQuerys.*
 import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.example.proyecto_integrado.ui.theme.Teal200
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -48,13 +49,9 @@ private var mauth = Firebase.auth
 private lateinit var googleSignInClient: GoogleSignInClient
 private val db = Firebase.firestore
 private var user = mauth.currentUser
-private var nombreUsuario = ""
-private var urlPhoto = ""
+private var userName = ""
 private var urlPhoto2 = ""
 private val storageRef = Firebase.storage.reference
-
-//TODO hacer privada cuando modifique las listas de la clase posts
-var listaInicio: MutableList<Carta> = mutableListOf()
 
 class NavBar : ComponentActivity() {
 
@@ -75,60 +72,29 @@ class NavBar : ComponentActivity() {
                 .get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
-                        nombreUsuario = document.getString("user").toString()
+                        userName = document.getString("user").toString()
                     }
                 }.addOnFailureListener {}
 
             storageRef.child(user.uid).downloadUrl.addOnSuccessListener {
-                // Got the download URL for 'users/me/profile.png'
                 urlPhoto2 = it.toString()
             }.addOnFailureListener {
             }
             //---usado por settings---
 
 
-            //usado por inicio
-            val docRef2 = db.collection("posts")
-            docRef2
-                .get()
-                .addOnSuccessListener { document ->
-                    for (i in document) {
-
-                        val aux =
-                            Carta(
-                                i.id,
-                                i.getString("nombreJuego")!!,
-                                i.getString("titulo")!!,
-                                i.getString("urlPhotoJuego")!!,
-                                i.getString("urlPhotoUser")!!,
-                                i.getString("userName")!!
-                            )
-
-                        if (aux != null) {
-                            listaInicio.add(aux)
-                        }
-                    }
-
-                }.addOnFailureListener {
-                    Toast.makeText(this, "Notificación corta", Toast.LENGTH_SHORT).show()
-                }
-            //---usado por inicio---
-
-
             Proyecto_IntegradoTheme {
-
                 val navController = rememberNavController()
 
-                // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     Scaffold(
                         topBar = {
                         },
                         bottomBar = {
                             val items = listOf(
-                                Screen.Account,
-                                Screen.DateRange,
-                                Screen.Edit,
+                                Screen.Home,
+                                Screen.Posts,
+                                Screen.Settings
                             )
                             BottomNavigation {
                                 val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -162,33 +128,66 @@ class NavBar : ComponentActivity() {
     @Composable
     fun ScreenController(navController: NavHostController) {
 
-        NavHost(navController = navController, startDestination = "inicio") {
+        NavHost(navController = navController, startDestination = "home") {
 
-            composable("inicio") {
+            composable("home") {
                 StartScreen()
             }
 
-            composable("com/example/proyecto_integrado/posts") {
+            composable("posts") {
                 PostsScreen()
             }
 
-            composable("ajustes") {
+            composable("settings") {
                 SettingsScreen()
             }
         }
     }
 
     @Composable
-    fun StartScreen() {
-        //TODO no se carga la primera vez que se ve y deberia poner para que se refresque en tiempo real y se pare si la pantalla se quita
-        RecyclerView(listaInicio)
+    fun StartScreen(
+        postsViewModel: PostsViewModel = viewModel(factory = PostsViewModelFactory(PostsRepo()))
+    ) {
+        when (val postsList = postsViewModel.getPostInfo().collectAsState(initial = null).value) {
 
+            is OnError -> {
+                Text(text = "Please try after sometime")
+            }
+
+            is OnSuccess -> {
+                val listOfPosts = postsList.querySnapshot?.toObjects(Posts::class.java)
+                listOfPosts?.let {
+                    Column {
+                        LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                            items(listOfPosts) {
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(6.dp),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    RecyclerCard(it)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    class PostsViewModelFactory(private val postsRepo: PostsRepo) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(PostsViewModel::class.java)) {
+                return PostsViewModel(postsRepo) as T
+            }
+            throw IllegalStateException()
+        }
     }
 
     @Composable
     fun PostsScreen() {
         val navController = rememberNavController()
-        // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
             Scaffold(
                 Modifier
@@ -198,8 +197,8 @@ class NavBar : ComponentActivity() {
                 },
                 topBar = {
                     val items = listOf(
-                        Screen.MisPosts,
-                        Screen.favourites,
+                        Screen.MyPosts,
+                        Screen.Favourites,
                     )
                     BottomNavigation {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -230,9 +229,9 @@ class NavBar : ComponentActivity() {
     @Composable
     fun ScreenController2(navController: NavHostController) {
 
-        NavHost(navController = navController, startDestination = "misPosts") {
+        NavHost(navController = navController, startDestination = "myPosts") {
 
-            composable("misPosts") {
+            composable("myPosts") {
                 MisPostScreen()
             }
 
@@ -244,7 +243,8 @@ class NavBar : ComponentActivity() {
 
     @Composable
     fun FavouritesScreen() {
-        RecyclerView(listaInicio)
+        //TODO 1
+        //RecyclerView(listaInicio)
     }
 
     @Composable
@@ -256,34 +256,29 @@ class NavBar : ComponentActivity() {
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        val intent = Intent(context, CrearPost::class.java)
+                        val intent = Intent(context, CreatePost::class.java)
                         startActivity(intent)
                     }
-                    //TODO buscar si puedo poner un modificador para que salga bien el fabButton
-                    //   , modifier = Modifier.padding(expandVertically(16.dp)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = "Localized description")
                 }
             }
-        ) { RecyclerView(listaInicio) }
+        ) {
+        }
+        //TODO 2
+        //RecyclerView(listaInicio) }
     }
 
     @Composable
-    private fun RecipeCard(carta: Carta) {
+    private fun RecyclerCard(post: Posts) {
         val context = LocalContext.current
-
-        storageRef.child(carta.urlJuego).downloadUrl.addOnSuccessListener {
-            urlPhoto = it.toString()
-        }.addOnFailureListener {
-        }
-
         Card(
             shape = RoundedCornerShape(8.dp), elevation = 8.dp, modifier = Modifier
                 .padding(8.dp)
                 .clickable(onClick = {
 
                     val intent = Intent(context, VistaPost::class.java)
-                    intent.putExtra("idPost", carta.idPost);
+                    intent.putExtra("idPost", post.autor);
                     startActivity(intent)
                 })
         ) {
@@ -295,8 +290,8 @@ class NavBar : ComponentActivity() {
             ) {
 
                 CoilImage(
-                    data = urlPhoto,
-                    contentDescription = "juego",
+                    data = post.urlPhotoJuego,
+                    contentDescription = "game",
                     alignment = Alignment.TopCenter,
                     modifier = Modifier
                         .height(150.dp)
@@ -327,11 +322,11 @@ class NavBar : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
 
-                    Text(text = carta.titulo, style = MaterialTheme.typography.h6)
+                    Text(text = post.title, style = MaterialTheme.typography.h6)
 
                     Spacer(modifier = Modifier.padding(5.dp))
 
-                    Text(text = carta.nombreJuego, style = MaterialTheme.typography.h6)
+                    Text(text = post.gameName, style = MaterialTheme.typography.h6)
                 }
 
                 Column(
@@ -341,7 +336,7 @@ class NavBar : ComponentActivity() {
                 ) {
 
                     CoilImage(
-                        data = carta.urlUser,
+                        data = post.urlPhotoUser,
                         contentDescription = "android",
                         alignment = Alignment.BottomCenter,
                         modifier = Modifier
@@ -368,7 +363,7 @@ class NavBar : ComponentActivity() {
                         }
                     )
                     Text(
-                        text = carta.nameUser,
+                        text = post.userName,
                         style = MaterialTheme.typography.subtitle1,
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
                     )
@@ -379,17 +374,7 @@ class NavBar : ComponentActivity() {
     }
 
     @Composable
-    fun RecyclerView(lista: List<Carta>) {
-        LazyColumn {
-            items(lista) { recipe ->
-                RecipeCard(recipe)
-            }
-        }
-    }
-
-    @Composable
     fun SettingsScreen() {
-//TODO deberia poder llamar aqui a un metodo en otra clase
         val context = LocalContext.current
         val checkedState1 = remember { mutableStateOf(false) }
         val checkedState2 = remember { mutableStateOf(false) }
@@ -459,7 +444,7 @@ class NavBar : ComponentActivity() {
                         text = if (user.providerData[1].providerId == "google.com") {
                             user.displayName
                         } else {
-                            nombreUsuario
+                            userName
                         },
                         style = TextStyle(color = Color.Black),
                         textAlign = TextAlign.Left,
@@ -479,27 +464,12 @@ class NavBar : ComponentActivity() {
                     val intent = Intent(context, MainActivity::class.java)
                     startActivity(intent)
                     finish()
-                    //TODO Sigue guardando las variables anteriores poner a null
-                    //TODO poner string
-                }) { Text("cerrar sesion") }
-            Button(modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-                onClick = {
+                    urlPhoto2 = ""
+                    userName = ""
+                    //TODO 3
+                }) { Text(getString(R.string.logout)) }
 
-                    val intent = Intent(context, Main::class.java)
-                    startActivity(intent)
-
-                }) { Text("prueba") }
-
-            //TODO no me lo pone blanco DIVIDER
-            Divider(
-                color = if (isSystemInDarkTheme()) {
-                    Color.White
-                } else {
-                    Color.Black
-                }, thickness = 3.dp
-            )
+            Divider(color = Color.White)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -566,5 +536,5 @@ class NavBar : ComponentActivity() {
                 )
             }
         }
-    }//TODO aqui termina el settings
+    }
 }

@@ -8,13 +8,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -30,7 +28,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.GoogleAuthProvider
 
 class MainActivity : ComponentActivity() {
-    //variables necesarias para firebase
     val RC_SIGN_IN = 1664
     private var mauth = Firebase.auth
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -38,7 +35,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //variables necesarias para firebase
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -46,7 +42,6 @@ class MainActivity : ComponentActivity() {
             googleSignInClient = GoogleSignIn.getClient(this, gso)
 
             Proyecto_IntegradoTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     login()
                 }
@@ -54,7 +49,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    //compruebo al principio si esta logeado
     override fun onStart() {
         super.onStart()
         val currentUser = mauth.currentUser
@@ -74,11 +68,11 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //TODO poner icono de la aplicacion
+            //TODO 1
             Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = null)
 
             val email = remember { mutableStateOf(TextFieldValue("")) }
-            val contrasena = remember { mutableStateOf(TextFieldValue("")) }
+            val password = remember { mutableStateOf(TextFieldValue("")) }
             var error by remember { mutableStateOf(false) }
 
             TextField(
@@ -97,10 +91,10 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                value = contrasena.value,
+                value = password.value,
                 isError = error,
                 onValueChange = {
-                    contrasena.value = it
+                    password.value = it
                     error = false
                 },
                 label = { Text(getString(R.string.password)) },
@@ -112,7 +106,7 @@ class MainActivity : ComponentActivity() {
 
             Button(onClick = {
                 var emailEmpty = email.value.text.length == 0
-                var passwordEmpty = contrasena.value.text.length == 0
+                var passwordEmpty = password.value.text.length == 0
 
                 if (emailEmpty || passwordEmpty) {
                     Toast.makeText(
@@ -122,7 +116,7 @@ class MainActivity : ComponentActivity() {
                     ).show()
                     error = true
                 } else {
-                    mauth.signInWithEmailAndPassword(email.value.text, contrasena.value.text)
+                    mauth.signInWithEmailAndPassword(email.value.text, password.value.text)
                         .addOnCompleteListener(this@MainActivity) { task ->
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
@@ -144,6 +138,7 @@ class MainActivity : ComponentActivity() {
             { Text(getString(R.string.log_in)) }
 
             Spacer(modifier = Modifier.height(16.dp))
+
             Image(
                 painter = painterResource(id = R.drawable.google_short_logo),
                 contentDescription = "",
@@ -172,7 +167,6 @@ class MainActivity : ComponentActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 // Google Sign In was successful, authenticate with Firebase
-
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
@@ -186,6 +180,7 @@ class MainActivity : ComponentActivity() {
         mauth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    //TODO 2
                     // Sign in success, update UI with the signed-in user's information
                     val intent = Intent(this@MainActivity, NavBar::class.java)
                     startActivity(intent)
