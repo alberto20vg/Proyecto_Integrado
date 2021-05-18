@@ -92,7 +92,7 @@ class CreatePost : ComponentActivity() {
                     .padding(20.dp)
                     .height(50.dp)
             )
-            //TODO 1
+
             TextField(
                 value = text,
                 onValueChange = { text = it },
@@ -128,7 +128,7 @@ class CreatePost : ComponentActivity() {
                         "urlPhotoUser" to urlPhoto,
                         "userName" to userName,
                         "email" to user.email,
-                        //TODO hace falta ver como referencia a los comentarios
+                        //TODO 1
                         "comentarios" to "algo",
                         //TODO 2
                         "urlPhotoJuego" to urlPhotoGame,
@@ -205,13 +205,13 @@ class CreatePost : ComponentActivity() {
     fun GamesDetails(game: Games) {
         val context = LocalContext.current
         Column(modifier = Modifier.clickable {
-            //TODO 3
         }) {
             Text(
                 text = game.gameName,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .clickable {
+                        //TODO 3
                         Toast.makeText(
                             context,
                             game.gameName, Toast.LENGTH_SHORT
