@@ -3,8 +3,6 @@ package com.example.proyecto_integrado
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.widget.Toast
-
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -24,11 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import kotlin.concurrent.thread
 
 class SplashScreen : ComponentActivity() {
     @ExperimentalAnimationApi
@@ -36,8 +29,7 @@ class SplashScreen : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             imagen()
-            //espera un segundo para que de sensacion de carga
-            var handler = Handler()
+            val handler = Handler()
             handler.postDelayed(
                 {
                     val intent = Intent(this, MainActivity::class.java)
@@ -51,7 +43,6 @@ class SplashScreen : ComponentActivity() {
     @ExperimentalAnimationApi
     @Composable
     fun imagen() {
-        val context = LocalContext.current
         Card {
             var expanded by remember { mutableStateOf(false) }
             Column(
@@ -61,7 +52,6 @@ class SplashScreen : ComponentActivity() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                //codigo creado para hacer una animacion automatica al medio segundo
                 Handler().postDelayed(Runnable {
                     expanded = true
                 }, 500)

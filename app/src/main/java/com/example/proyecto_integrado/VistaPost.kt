@@ -27,7 +27,7 @@ private  var titulo: String = ""
 private  var urlPhoto: String=""
 private  var  textoresena: String=""
 
-var prueba = ArrayList<Comentario>()
+var prueba = ArrayList<String>()
 val data = hashMapOf(
     "user" to "user1",
     "userId" to "userid1",
@@ -50,7 +50,7 @@ class VistaPost : ComponentActivity() {
                         urlPhoto = document.getString("urlPhotoJuego").toString()
                         textoresena = document.getString("textoResena").toString()
                         //TODO me saca el mapa pero da problema si quiero sacar los datos concretos
-                        prueba = document.get("comentarios") as ArrayList<Comentario>
+                        prueba = document.get("comentarios") as ArrayList<String>
 
                     }
                 }.addOnFailureListener {}

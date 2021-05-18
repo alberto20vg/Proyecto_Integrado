@@ -9,9 +9,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
@@ -47,13 +44,12 @@ class Register : ComponentActivity() {
     private val SELECT_ACTIVITY = 50
     private var imageUri: Uri? = null
 
-    //recojo la uri de la imagen
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when {
             requestCode == SELECT_ACTIVITY && resultCode == Activity.RESULT_OK -> {
                 imageUri = data!!.data
-                imageUri?.let { cargarImagen(it) }
+                imageUri?.let { uploadImage(it) }
             }
         }
     }
@@ -62,11 +58,11 @@ class Register : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register).apply {
 
-            cargarImagen(R.drawable.delfaut_profile)
+            uploadImage(R.drawable.delfaut_profile)
 
             findViewById<ComposeView>(R.id.compose_view).setContent {
-                // In Compose world
                 MaterialTheme {
+
                     val context = LocalContext.current
 
                     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -154,11 +150,11 @@ class Register : ComponentActivity() {
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Button(onClick = {
-                            var isUserEmpty = user.value.text.isEmpty()
-                            var isEmailEmpty = email.value.text.isEmpty()
-                            var isPasswordEmpty = password.value.text.isEmpty()
-                            var isRepeatPasswordEmpty = repeatPassword.value.text.isEmpty()
-                            var passwordsMatch = password.value == repeatPassword.value
+                            val isUserEmpty = user.value.text.isEmpty()
+                            val isEmailEmpty = email.value.text.isEmpty()
+                            val isPasswordEmpty = password.value.text.isEmpty()
+                            val isRepeatPasswordEmpty = repeatPassword.value.text.isEmpty()
+                            val passwordsMatch = password.value == repeatPassword.value
 
                             if (isUserEmpty || isEmailEmpty || isPasswordEmpty || isRepeatPasswordEmpty) {
                                 Toast.makeText(
@@ -174,9 +170,9 @@ class Register : ComponentActivity() {
                                     ).addOnCompleteListener(this@Register) { task ->
                                         if (task.isSuccessful) {
                                             val userId = mauth.currentUser.uid
-                                            var file = imageUri
+                                            val file = imageUri
                                             val imageRef = storageRef.child(userId)
-                                            var uploadTask = file?.let { imageRef.putFile(it) }
+                                            val uploadTask = file?.let { imageRef.putFile(it) }
 
                                             uploadTask?.addOnFailureListener {
                                             }?.addOnSuccessListener {
@@ -192,7 +188,6 @@ class Register : ComponentActivity() {
                                                 db.collection("users").document(userId).set(data)
                                             }, 500)
 
-                                            //TODO revisar que aqui funcione bien el intent
                                             val intent = Intent(context, NavBar::class.java)
                                             startActivity(intent)
                                             finish()
@@ -213,12 +208,12 @@ class Register : ComponentActivity() {
         }
     }
 
-    private fun cargarImagen(url: Uri) {
+    private fun uploadImage(url: Uri) {
         val image = findViewById<View>(R.id.imageView) as ImageView
         Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(image)
     }
 
-    private fun cargarImagen(url: Int) {
+    private fun uploadImage(url: Int) {
         val image = findViewById<View>(R.id.imageView) as ImageView
         Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(image)
     }
