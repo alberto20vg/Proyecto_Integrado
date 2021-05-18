@@ -8,7 +8,8 @@ data class Posts(
     val title: String,
     val urlPhotoJuego: String,
     val urlPhotoUser: String,
-    val userName: String
+    val userName: String,
+    val email:String
 ) {
-    constructor() : this("", "", "", "", "", "", "", "")
+    constructor() : this("","", "", "", "", "", "", "", "")
 }
