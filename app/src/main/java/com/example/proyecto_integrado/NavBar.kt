@@ -131,7 +131,7 @@ class NavBar : ComponentActivity() {
         NavHost(navController = navController, startDestination = "home") {
 
             composable("home") {
-                StartScreen()
+                HomeScreen()
             }
 
             composable("posts") {
@@ -145,7 +145,7 @@ class NavBar : ComponentActivity() {
     }
 
     @Composable
-    fun StartScreen(
+    fun HomeScreen(
         postsViewModel: PostsViewModel = viewModel(factory = PostsViewModelFactory(PostsRepo()))
     ) {
         when (val postsList = postsViewModel.getPostInfo().collectAsState(initial = null).value) {
@@ -248,7 +248,13 @@ class NavBar : ComponentActivity() {
     }
 
     @Composable
-    fun MisPostScreen() {
+    fun MisPostScreen(
+        postsViewModel: PostsViewModel = viewModel(
+            factory = PostsViewModelFactory(
+                PostsRepo()
+            )
+        )
+    ) {
         val context = LocalContext.current
         Scaffold(
             backgroundColor = Color(0xFFFEFEFA),
@@ -265,8 +271,32 @@ class NavBar : ComponentActivity() {
             }
         ) {
         }
-        //TODO 2
-        //RecyclerView(listaInicio) }
+        when (val postsList = postsViewModel.getMyPostInfo().collectAsState(initial = null).value) {
+
+            is OnError -> {
+                Text(text = "Please try after sometime")
+            }
+
+            is OnSuccess -> {
+                val listOfPosts = postsList.querySnapshot?.toObjects(Posts::class.java)
+                listOfPosts?.let {
+                    Column {
+                        LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                            items(listOfPosts) {
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(6.dp),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    RecyclerCard(it)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Composable

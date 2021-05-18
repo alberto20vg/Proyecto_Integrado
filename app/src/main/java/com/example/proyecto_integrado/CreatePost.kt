@@ -97,11 +97,12 @@ class CreatePost : ComponentActivity() {
                 value = text,
                 onValueChange = { text = it },
                 label = { Text(getString(R.string.enter_text)) },
-                maxLines = 2,
+                maxLines = 25,
+                singleLine = false,
                 textStyle = TextStyle(color = Color.Blue, fontWeight = FontWeight.Bold),
                 modifier = Modifier
                     .padding(20.dp)
-                    .height(50.dp)
+                    .height(150.dp)
             )
 
             if (user.providerData[1].providerId == "google.com") {
@@ -121,10 +122,14 @@ class CreatePost : ComponentActivity() {
                     val urlPhotoGame = it.toString()
 
                     val data = hashMapOf(
+                        "autor" to user.uid,
                         "textReview" to text,
                         "title" to title,
                         "urlPhotoUser" to urlPhoto,
                         "userName" to userName,
+                        "email" to user.email,
+                        //TODO hace falta ver como referencia a los comentarios
+                        "comentarios" to "algo",
                         //TODO 2
                         "urlPhotoJuego" to urlPhotoGame,
                         "gameName" to gameName
