@@ -19,7 +19,6 @@
         <activity android:name=".CreatePost" />
         <activity android:name=".AddGame" />
         <activity android:name=".VistaPost" />
-        <activity android:name=".Components.Main" />
         <activity
             android:name=".SplashScreen"
             android:exported="true"
