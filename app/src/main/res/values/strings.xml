@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Proyecto_Integrado</string>
+    <string name="app_name">GameHub</string>
     <string name="user">Usuario</string>
     <string name="password">Contraseña</string>
     <string name="authentication_failed">Authentication failed</string>

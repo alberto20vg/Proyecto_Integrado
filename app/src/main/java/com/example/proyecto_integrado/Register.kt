@@ -37,7 +37,6 @@ import com.google.firebase.storage.ktx.storage
 
 class Register : ComponentActivity() {
     private var mauth = Firebase.auth
-    private lateinit var googleSignInClient: GoogleSignInClient
     private val db = Firebase.firestore
     private val storage = Firebase.storage
     private var storageRef = storage.reference
@@ -65,18 +64,11 @@ class Register : ComponentActivity() {
 
                     val context = LocalContext.current
 
-                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(getString(R.string.default_web_client_id))
-                        .requestEmail()
-                        .build()
-                    googleSignInClient = GoogleSignIn.getClient(context, gso)
-
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight()
-                            .verticalScroll(rememberScrollState())
-                        ,
+                            .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -171,22 +163,49 @@ class Register : ComponentActivity() {
                                         if (task.isSuccessful) {
                                             val userId = mauth.currentUser.uid
                                             val file = imageUri
-                                            val imageRef = storageRef.child(userId)
-                                            val uploadTask = file?.let { imageRef.putFile(it) }
+                                            val readOnly: List<String>? = null
 
-                                            uploadTask?.addOnFailureListener {
-                                            }?.addOnSuccessListener {
+                                            if (file == null) {
+
+                                                Handler().postDelayed({
+                                                    val data = hashMapOf(
+                                                        "user" to user.value.text,
+                                                        "userId" to userId,
+                                                        "photo" to "delfaut_profile.jpg",
+                                                        "starPosts" to readOnly
+                                                    )
+                                                    db.collection("users").document(userId)
+                                                        .set(data)
+                                                }, 500)
+
+                                            } else {
+                                                val imageRef = storageRef.child(userId)
+                                                val uploadTask = file?.let { imageRef.putFile(it) }
+
+                                                uploadTask?.addOnFailureListener {
+                                                }?.addOnSuccessListener {
+                                                }
+
+                                                Handler().postDelayed({
+                                                    val data = hashMapOf(
+                                                        "user" to user.value.text,
+                                                        "userId" to userId,
+                                                        "photo" to userId,
+                                                        "starPosts" to readOnly
+                                                    )
+                                                    db.collection("users").document(userId)
+                                                        .set(data)
+                                                }, 500)
                                             }
-
+/*
+                                            val userId = mauth.currentUser.uid
+                                            val readOnly: List<Comments>? = null
                                             Handler().postDelayed({
                                                 val data = hashMapOf(
-                                                    "user" to user.value.text,
                                                     "userId" to userId,
-                                                    "photo" to userId
+                                                    "comments" to readOnly
                                                 )
-
-                                                db.collection("users").document(userId).set(data)
-                                            }, 500)
+                                            */
 
                                             val intent = Intent(context, NavBar::class.java)
                                             startActivity(intent)

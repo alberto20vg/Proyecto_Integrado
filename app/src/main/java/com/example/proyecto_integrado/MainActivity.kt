@@ -2,6 +2,7 @@ package com.example.proyecto_integrado
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,11 +27,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.ktx.firestore
 
 class MainActivity : ComponentActivity() {
     val RC_SIGN_IN = 1664
     private var mauth = Firebase.auth
     private lateinit var googleSignInClient: GoogleSignInClient
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +72,7 @@ class MainActivity : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //TODO 1
-            Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = null)
+            Image(painterResource(R.mipmap.ic_launcher), contentDescription = null)
 
             val email = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
@@ -180,11 +183,25 @@ class MainActivity : ComponentActivity() {
         mauth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    //TODO 2
                     // Sign in success, update UI with the signed-in user's information
-                    val intent = Intent(this@MainActivity, NavBar::class.java)
-                    startActivity(intent)
-                    finish()
+
+                    //TODO 2
+
+                    val userId = mauth.currentUser.uid
+                    val readOnly: List<String>? = null
+
+                    Handler().postDelayed({
+                        val data = hashMapOf(
+                            "userId" to userId,
+                           "starPosts" to readOnly
+                        )
+
+                        db.collection("users").document(userId).set(data)
+
+                        val intent = Intent(this@MainActivity, NavBar::class.java)
+                        startActivity(intent)
+                        finish()
+                    }, 500)
                 } else {
                     // If sign in fails, display a message to the user.
                 }

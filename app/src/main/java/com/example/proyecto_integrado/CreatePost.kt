@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.TextField
@@ -28,6 +27,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyecto_integrado.GamesPackage.*
+import com.example.proyecto_integrado.viewModels.VMCreatePost
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -39,8 +39,6 @@ private var user = mauth.currentUser
 private val storageRef = Firebase.storage.reference
 private var urlPhoto = ""
 private var userName = ""
-private var urlPhotoGame = ""
-private var gameName = ""
 
 class CreatePost : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +63,7 @@ class CreatePost : ComponentActivity() {
     }
 
     @Composable
-    fun createPost(model: ViewModelCreatePost = viewModel()) {
+    fun createPost(model: VMCreatePost = viewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,9 +72,8 @@ class CreatePost : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            val gameName by model.gameNameLiveData.observeAsState("Prueba")
-
-            Text(text = gameName)
+            val gameName by model.gameNameLiveData.observeAsState("")
+            val urlPhotoGame by model.urlPhotoGameLiveData.observeAsState("")
 
             var title by remember {
                 mutableStateOf("")
@@ -124,7 +121,7 @@ class CreatePost : ComponentActivity() {
 
             Button(onClick = {
                 storageRef.child(urlPhotoGame).downloadUrl.addOnSuccessListener {
-                    val urlPhotoGame = it.toString()
+
 
                     val data = hashMapOf(
                         "autor" to user.uid,
@@ -135,8 +132,7 @@ class CreatePost : ComponentActivity() {
                         "email" to user.email,
                         //TODO 1
                         "comentarios" to "algo",
-                        //TODO 2
-                        "urlPhotoJuego" to urlPhotoGame,
+                        "urlPhotoJuego" to it.toString(),
                         "gameName" to gameName
                     )
 
@@ -207,7 +203,7 @@ class CreatePost : ComponentActivity() {
 
     @OptIn(ExperimentalAnimationApi::class)
     @Composable
-    fun GamesDetails(game: Games, model: ViewModelCreatePost = viewModel()) {
+    fun GamesDetails(game: Games, model: VMCreatePost = viewModel()) {
         val context = LocalContext.current
         Column(modifier = Modifier.clickable {
         }) {
@@ -216,20 +212,15 @@ class CreatePost : ComponentActivity() {
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .clickable {
-                        //TODO 3
                         Toast
                             .makeText(
                                 context,
                                 game.gameName, Toast.LENGTH_SHORT
                             )
                             .show();
-
                         model.setGameName(game.gameName)
+                        model.setUrlPhotoGame(game.urlGame)
                     })
-
-
-            // urlPhotoGame = game.url
-            // gameName = game.gameName
         }
     }
 

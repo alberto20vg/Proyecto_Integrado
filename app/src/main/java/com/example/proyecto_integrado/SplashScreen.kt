@@ -55,7 +55,7 @@ class SplashScreen : ComponentActivity() {
                 Handler().postDelayed(Runnable {
                     expanded = true
                 }, 500)
-                Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = null)
+                Image(painterResource(R.mipmap.ic_launcher_foreground), contentDescription = null)
                 AnimatedVisibility(expanded) {
                     Text(
                         text = getString(R.string.app_name),

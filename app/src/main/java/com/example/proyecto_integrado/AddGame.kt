@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
@@ -18,10 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.proyecto_integrado.ui.theme.Teal200
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -37,8 +44,8 @@ private val db = Firebase.firestore
 class AddGame : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            addGame()
+        setContentView(R.layout.activity_add_game).apply {
+            findViewById<ComposeView>(R.id.compose_view).setContent { MaterialTheme { addGame() } }
         }
     }
 
@@ -47,6 +54,7 @@ class AddGame : ComponentActivity() {
         when {
             requestCode == SELECT_ACTIVITY && resultCode == Activity.RESULT_OK -> {
                 imageUri = data!!.data
+                imageUri?.let { uploadImage(it) }
             }
         }
     }
@@ -56,43 +64,10 @@ class AddGame : ComponentActivity() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
+                .fillMaxHeight().padding(top = 10.dp),
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            imageUri?.let {
-                CoilImage(
-                    data = it,
-                    contentDescription = "android",
-                    alignment = Alignment.TopCenter,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .height(100.dp)
-                        .width(100.dp)
-                        .clip(RoundedCornerShape(10.dp)),
-                    contentScale = ContentScale.Crop,
-                    loading = {
-                        Box(
-                            modifier = Modifier.background(
-                                shape = CircleShape,
-                                color = Teal200
-                            )
-                        )
-                    },
-                    error = {
-                        Box(
-                            modifier = Modifier.background(
-                                shape = CircleShape,
-                                color = Teal200
-                            )
-                        )
-                    }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             Button(onClick = {
                 ImageController.selectPhotoFromGallery(this@AddGame, SELECT_ACTIVITY)
             }) { Text(getString(R.string.upload_potho)) }
@@ -143,4 +118,15 @@ class AddGame : ComponentActivity() {
             }
         }
     }
+
+    private fun uploadImage(url: Uri) {
+        val image = findViewById<View>(R.id.imageView) as ImageView
+        Glide.with(this).load(url).into(image)
+    }
+
+    private fun uploadImage(url: Int) {
+        val image = findViewById<View>(R.id.imageView) as ImageView
+        Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(image)
+    }
 }
+

@@ -79,6 +79,7 @@ class NavBar : ComponentActivity() {
             storageRef.child(user.uid).downloadUrl.addOnSuccessListener {
                 urlPhoto2 = it.toString()
             }.addOnFailureListener {
+                urlPhoto2 ="https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/delfaut_profile.jpg?alt=media&token=44fa05a5-075b-4eea-91e7-758f2d9ea3ed"
             }
             //---usado por settings---
 
@@ -500,16 +501,6 @@ class NavBar : ComponentActivity() {
                     userName = ""
                     //TODO 3
                 }) { Text(getString(R.string.logout)) }
-
-            //TODO boton de prueba
-            Button(modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-                onClick = {
-                    val intent = Intent(context, Prueba::class.java)
-                    startActivity(intent)
-
-                }) { Text("Prueba") }
 
             Divider(color = Color.White)
 
