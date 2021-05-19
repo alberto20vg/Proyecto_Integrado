@@ -71,8 +71,14 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //TODO 1
-            Image(painterResource(R.mipmap.ic_launcher), contentDescription = null)
+            Image(
+                painterResource(R.drawable.icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .height(200.dp)
+                    .width(200.dp)
+            )
 
             val email = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
@@ -184,16 +190,13 @@ class MainActivity : ComponentActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-
-                    //TODO 2
-
                     val userId = mauth.currentUser.uid
                     val readOnly: List<String>? = null
 
                     Handler().postDelayed({
                         val data = hashMapOf(
                             "userId" to userId,
-                           "starPosts" to readOnly
+                            "starPosts" to readOnly
                         )
 
                         db.collection("users").document(userId).set(data)

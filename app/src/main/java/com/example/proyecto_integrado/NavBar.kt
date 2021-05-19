@@ -16,6 +16,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +36,8 @@ import androidx.navigation.compose.*
 import com.example.proyecto_integrado.PostsQuerys.*
 import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.example.proyecto_integrado.ui.theme.Teal200
+import com.example.proyecto_integrado.viewModels.VMCreatePost
+import com.example.proyecto_integrado.viewModels.VMSettings
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -79,7 +82,8 @@ class NavBar : ComponentActivity() {
             storageRef.child(user.uid).downloadUrl.addOnSuccessListener {
                 urlPhoto2 = it.toString()
             }.addOnFailureListener {
-                urlPhoto2 ="https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/delfaut_profile.jpg?alt=media&token=44fa05a5-075b-4eea-91e7-758f2d9ea3ed"
+                urlPhoto2 =
+                    "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/delfaut_profile.jpg?alt=media&token=44fa05a5-075b-4eea-91e7-758f2d9ea3ed"
             }
             //---usado por settings---
 
@@ -110,7 +114,7 @@ class NavBar : ComponentActivity() {
                                         onClick = {
                                             navController.popBackStack(
                                                 //   navController.graph.startDestinationId, false
-                                               navController.graph.startDestination, false
+                                                navController.graph.startDestination, false
                                             )
                                             if (currentRoute != it.route) {
                                                 navController.navigate(it.route)
@@ -244,9 +248,35 @@ class NavBar : ComponentActivity() {
     }
 
     @Composable
-    fun FavouritesScreen() {
-        //TODO 1
-        //RecyclerView(listaInicio)
+    fun FavouritesScreen(
+        postsViewModel: PostsViewModel = viewModel(factory = PostsViewModelFactory(PostsRepo()))
+    ) {
+        when (val postsList = postsViewModel.getStarPosts().collectAsState(initial = null).value) {
+
+            is OnError -> {
+                Text(text = "Please try after sometime")
+            }
+
+            is OnSuccess -> {
+                val listOfPosts = postsList.querySnapshot?.toObjects(Posts::class.java)
+                listOfPosts?.let {
+                    Column {
+                        LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                            items(listOfPosts) {
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(6.dp),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    RecyclerCard(it)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Composable
@@ -272,7 +302,8 @@ class NavBar : ComponentActivity() {
                 }
             }
         ) {
-            when (val postsList = postsViewModel.getMyPostInfo().collectAsState(initial = null).value) {
+            when (val postsList =
+                postsViewModel.getMyPostInfo().collectAsState(initial = null).value) {
 
                 is OnError -> {
                     Text(text = "Please try after sometime")
@@ -407,10 +438,13 @@ class NavBar : ComponentActivity() {
     }
 
     @Composable
-    fun SettingsScreen() {
+    fun SettingsScreen(model: VMSettings = viewModel()) {
         val context = LocalContext.current
         val checkedState1 = remember { mutableStateOf(false) }
         val checkedState2 = remember { mutableStateOf(false) }
+
+        val userNameVM by model.userNameLiveData.observeAsState(userName)
+        val urlPhotoVM by model.urlPhoto2LiveData.observeAsState(urlPhoto2)
 
         Column(
             modifier = Modifier
@@ -436,7 +470,7 @@ class NavBar : ComponentActivity() {
                     data = if (user.providerData[1].providerId == "google.com") {
                         user.photoUrl
                     } else {
-                        urlPhoto2
+                        urlPhotoVM
                     },
                     contentDescription = "android",
                     alignment = Alignment.TopCenter,
@@ -477,7 +511,7 @@ class NavBar : ComponentActivity() {
                         text = if (user.providerData[1].providerId == "google.com") {
                             user.displayName
                         } else {
-                            userName
+                            userNameVM
                         },
                         style = TextStyle(color = Color.Black),
                         textAlign = TextAlign.Left,
@@ -497,9 +531,9 @@ class NavBar : ComponentActivity() {
                     val intent = Intent(context, MainActivity::class.java)
                     startActivity(intent)
                     finish()
-                    urlPhoto2 = ""
-                    userName = ""
-                    //TODO 3
+                    model.setUserName("")
+                    model.setUrlPhoto2("")
+                    //TODO esto sigue sin ir viewModel implementado
                 }) { Text(getString(R.string.logout)) }
 
             Divider(color = Color.White)

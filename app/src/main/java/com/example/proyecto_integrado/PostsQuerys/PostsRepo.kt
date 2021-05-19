@@ -45,4 +45,19 @@ class PostsRepo {
             snapshotListener.remove()
         }
     }
+//TODO hacer query cuando este hecha la lista de favoritos
+    fun getStarPosts() = callbackFlow {
+        val collection = firestore.collection("posts")
+        val snapshotListener = collection.addSnapshotListener { value, error ->
+            val response = if (error == null) {
+                OnSuccess(value)
+            } else {
+                OnError(error)
+            }
+            offer(response)
+        }
+        awaitClose {
+            snapshotListener.remove()
+        }
+    }
 }

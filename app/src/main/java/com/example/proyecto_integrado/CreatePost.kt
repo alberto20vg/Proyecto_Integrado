@@ -130,8 +130,7 @@ class CreatePost : ComponentActivity() {
                         "urlPhotoUser" to urlPhoto,
                         "userName" to userName,
                         "email" to user.email,
-                        //TODO 1
-                        "comentarios" to "algo",
+                        "comentarios" to null,
                         "urlPhotoJuego" to it.toString(),
                         "gameName" to gameName
                     )

@@ -19,9 +19,14 @@ class PostsViewModel(val postsRepo: PostsRepo) : ViewModel() {
                 postsStateFlow.value = it
             }
 
+            postsRepo.getStarPosts().collect {
+                postsStateFlow.value = it
+            }
+
         }
     }
 
     fun getPostInfo() = postsRepo.getHome()
     fun getMyPostInfo() = postsRepo.getMyPosts()
+    fun getStarPosts()=postsRepo.getStarPosts()
 }
