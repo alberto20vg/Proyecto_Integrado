@@ -108,7 +108,8 @@ class NavBar : ComponentActivity() {
                                         label = { Text(text = it.label) },
                                         onClick = {
                                             navController.popBackStack(
-                                                navController.graph.startDestination, false
+                                                //   navController.graph.startDestinationId, false
+                                               navController.graph.startDestination, false
                                             )
                                             if (currentRoute != it.route) {
                                                 navController.navigate(it.route)
@@ -270,26 +271,26 @@ class NavBar : ComponentActivity() {
                 }
             }
         ) {
-        }
-        when (val postsList = postsViewModel.getMyPostInfo().collectAsState(initial = null).value) {
+            when (val postsList = postsViewModel.getMyPostInfo().collectAsState(initial = null).value) {
 
-            is OnError -> {
-                Text(text = "Please try after sometime")
-            }
+                is OnError -> {
+                    Text(text = "Please try after sometime")
+                }
 
-            is OnSuccess -> {
-                val listOfPosts = postsList.querySnapshot?.toObjects(Posts::class.java)
-                listOfPosts?.let {
-                    Column {
-                        LazyColumn(modifier = Modifier.fillMaxHeight()) {
-                            items(listOfPosts) {
-                                Card(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(6.dp),
-                                    shape = RoundedCornerShape(16.dp)
-                                ) {
-                                    RecyclerCard(it)
+                is OnSuccess -> {
+                    val listOfPosts = postsList.querySnapshot?.toObjects(Posts::class.java)
+                    listOfPosts?.let {
+                        Column {
+                            LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                                items(listOfPosts) {
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(6.dp),
+                                        shape = RoundedCornerShape(16.dp)
+                                    ) {
+                                        RecyclerCard(it)
+                                    }
                                 }
                             }
                         }
@@ -297,6 +298,7 @@ class NavBar : ComponentActivity() {
                 }
             }
         }
+
     }
 
     @Composable
@@ -498,6 +500,16 @@ class NavBar : ComponentActivity() {
                     userName = ""
                     //TODO 3
                 }) { Text(getString(R.string.logout)) }
+
+            //TODO boton de prueba
+            Button(modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+                onClick = {
+                    val intent = Intent(context, Prueba::class.java)
+                    startActivity(intent)
+
+                }) { Text("Prueba") }
 
             Divider(color = Color.White)
 

@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.TextField
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
@@ -39,7 +41,6 @@ private var urlPhoto = ""
 private var userName = ""
 private var urlPhotoGame = ""
 private var gameName = ""
-
 
 class CreatePost : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +65,7 @@ class CreatePost : ComponentActivity() {
     }
 
     @Composable
-    fun createPost() {
+    fun createPost(model: ViewModelCreatePost = viewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,6 +73,10 @@ class CreatePost : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            val gameName by model.gameNameLiveData.observeAsState("Prueba")
+
+            Text(text = gameName)
 
             var title by remember {
                 mutableStateOf("")
@@ -202,7 +207,7 @@ class CreatePost : ComponentActivity() {
 
     @OptIn(ExperimentalAnimationApi::class)
     @Composable
-    fun GamesDetails(game: Games) {
+    fun GamesDetails(game: Games, model: ViewModelCreatePost = viewModel()) {
         val context = LocalContext.current
         Column(modifier = Modifier.clickable {
         }) {
@@ -212,13 +217,19 @@ class CreatePost : ComponentActivity() {
                     .align(Alignment.CenterHorizontally)
                     .clickable {
                         //TODO 3
-                        Toast.makeText(
-                            context,
-                            game.gameName, Toast.LENGTH_SHORT
-                        ).show();
+                        Toast
+                            .makeText(
+                                context,
+                                game.gameName, Toast.LENGTH_SHORT
+                            )
+                            .show();
+
+                        model.setGameName(game.gameName)
                     })
-            urlPhotoGame = game.url
-            gameName = game.gameName
+
+
+            // urlPhotoGame = game.url
+            // gameName = game.gameName
         }
     }
 
