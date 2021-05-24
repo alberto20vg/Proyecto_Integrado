@@ -135,7 +135,14 @@ class CreatePost : ComponentActivity() {
                         "gameName" to gameName
                     )
 
-                    db.collection("posts").add(data)
+                    db.collection("posts").add(data).addOnSuccessListener {
+                        //TODO hacer un campo para guardar el id
+                        Toast
+                            .makeText(
+                                this@CreatePost,
+                                it.id, Toast.LENGTH_SHORT
+                            )
+                            .show();}
                 }.addOnFailureListener {
                 }
 
