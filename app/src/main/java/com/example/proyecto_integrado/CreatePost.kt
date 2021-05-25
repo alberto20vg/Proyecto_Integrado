@@ -132,17 +132,13 @@ class CreatePost : ComponentActivity() {
                         "email" to user.email,
                         "comentarios" to null,
                         "urlPhotoJuego" to it.toString(),
-                        "gameName" to gameName
+                        "gameName" to gameName,
+                        "postId" to ""
                     )
 
                     db.collection("posts").add(data).addOnSuccessListener {
-                        //TODO hacer un campo para guardar el id
-                        Toast
-                            .makeText(
-                                this@CreatePost,
-                                it.id, Toast.LENGTH_SHORT
-                            )
-                            .show();}
+                        db.collection("posts").document(it.id).update("postId", it.id)
+                    }
                 }.addOnFailureListener {
                 }
 

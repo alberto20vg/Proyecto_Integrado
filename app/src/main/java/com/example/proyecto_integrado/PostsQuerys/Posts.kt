@@ -9,7 +9,8 @@ data class Posts(
     val urlPhotoJuego: String,
     val urlPhotoUser: String,
     val userName: String,
-    val email:String
+    val email:String,
+    val postId:String
 ) {
-    constructor() : this("","", "", "", "", "", "", "", "")
+    constructor() : this("","","", "", "", "", "", "", "", "")
 }
