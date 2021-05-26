@@ -1,7 +1,9 @@
 package com.example.proyecto_integrado
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,7 +38,6 @@ import androidx.navigation.compose.*
 import com.example.proyecto_integrado.PostsQuerys.*
 import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.example.proyecto_integrado.ui.theme.Teal200
-import com.example.proyecto_integrado.viewModels.VMCreatePost
 import com.example.proyecto_integrado.viewModels.VMSettings
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -46,6 +47,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dev.chrisbanes.accompanist.coil.CoilImage
+import java.util.Arrays
 
 
 private var mauth = Firebase.auth
@@ -251,7 +253,9 @@ class NavBar : ComponentActivity() {
     fun FavouritesScreen(
         postsViewModel: PostsViewModel = viewModel(factory = PostsViewModelFactory(PostsRepo()))
     ) {
-        when (val postsList = postsViewModel.getStarPosts().collectAsState(initial = null).value) {
+
+        when (val postsList =
+            postsViewModel.getStarPosts().collectAsState(initial = null).value) {
 
             is OnError -> {
                 Text(text = "Please try after sometime")
@@ -340,9 +344,9 @@ class NavBar : ComponentActivity() {
             shape = RoundedCornerShape(8.dp), elevation = 8.dp, modifier = Modifier
                 .padding(8.dp)
                 .clickable(onClick = {
-                               val intent = Intent(context, VistaPost::class.java)
-                               intent.putExtra("idPost", post.postId);
-                               startActivity(intent)
+                    val intent = Intent(context, VistaPost::class.java)
+                    intent.putExtra("idPost", post.postId);
+                    startActivity(intent)
                 })
 
 

@@ -7,7 +7,7 @@ import com.example.proyecto_integrado.R
 
 class VMViewPost : ViewModel() {
 
-    private var starPosts = MutableLiveData<ArrayList<String>>()
+    var starPosts = MutableLiveData<ArrayList<String>>()
 
     val starPostsLiveData: MutableLiveData<ArrayList<String>>
         get() = starPosts
@@ -60,4 +60,7 @@ class VMViewPost : ViewModel() {
         }
     }
 
+    fun setStarPhotoPost(s: String) {
+        starPhotoPost.value = s
+    }
 }

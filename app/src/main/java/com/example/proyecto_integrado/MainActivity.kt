@@ -191,12 +191,13 @@ class MainActivity : ComponentActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     val userId = mauth.currentUser.uid
-                    val readOnly: List<String>? = null
+                    val arrayList = ArrayList<String>()
+                    arrayList.add("")
 
                     Handler().postDelayed({
                         val data = hashMapOf(
                             "userId" to userId,
-                            "starPosts" to readOnly
+                            "starPosts" to arrayList
                         )
 
                         db.collection("users").document(userId).set(data)

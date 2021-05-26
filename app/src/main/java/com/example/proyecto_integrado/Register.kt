@@ -163,7 +163,8 @@ class Register : ComponentActivity() {
                                         if (task.isSuccessful) {
                                             val userId = mauth.currentUser.uid
                                             val file = imageUri
-                                            val readOnly: List<String>? = null
+                                            val arrayList = ArrayList<String>()
+                                            arrayList.add("")
 
                                             if (file == null) {
 
@@ -172,12 +173,11 @@ class Register : ComponentActivity() {
                                                         "user" to user.value.text,
                                                         "userId" to userId,
                                                         "photo" to "delfaut_profile.jpg",
-                                                        "starPosts" to readOnly
+                                                        "starPosts" to arrayList
                                                     )
                                                     db.collection("users").document(userId)
                                                         .set(data)
                                                 }, 500)
-
                                             } else {
                                                 val imageRef = storageRef.child(userId)
                                                 val uploadTask = file?.let { imageRef.putFile(it) }
@@ -191,22 +191,12 @@ class Register : ComponentActivity() {
                                                         "user" to user.value.text,
                                                         "userId" to userId,
                                                         "photo" to userId,
-                                                        "starPosts" to readOnly
+                                                        "starPosts" to arrayList
                                                     )
                                                     db.collection("users").document(userId)
                                                         .set(data)
                                                 }, 500)
                                             }
-/*
-                                            val userId = mauth.currentUser.uid
-                                            val readOnly: List<Comments>? = null
-                                            Handler().postDelayed({
-                                                val data = hashMapOf(
-                                                    "userId" to userId,
-                                                    "comments" to readOnly
-                                                )
-                                            */
-
                                             val intent = Intent(context, NavBar::class.java)
                                             startActivity(intent)
                                             finish()
