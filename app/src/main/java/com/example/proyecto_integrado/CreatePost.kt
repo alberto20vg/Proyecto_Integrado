@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -121,7 +120,8 @@ class CreatePost : ComponentActivity() {
 
             Button(onClick = {
                 storageRef.child(urlPhotoGame).downloadUrl.addOnSuccessListener {
-
+                    val arrayList = ArrayList<String>()
+                    arrayList.add("")
 
                     val data = hashMapOf(
                         "autor" to user.uid,
@@ -130,7 +130,7 @@ class CreatePost : ComponentActivity() {
                         "urlPhotoUser" to urlPhoto,
                         "userName" to userName,
                         "email" to user.email,
-                        "comentarios" to null,
+                        "comentarios" to arrayList,
                         "urlPhotoJuego" to it.toString(),
                         "gameName" to gameName,
                         "postId" to ""
@@ -203,7 +203,6 @@ class CreatePost : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     fun GamesDetails(game: Games, model: VMCreatePost = viewModel()) {
         val context = LocalContext.current

@@ -46,10 +46,9 @@ class PostsRepo {
         }
     }
 
-    //TODO hacer query cuando este hecha la lista de favoritos
-    fun getStarPosts(prueba: ArrayList<String>) = callbackFlow {
+    fun getStarPosts(queryStarPosts: ArrayList<String>) = callbackFlow {
 
-        val collection = firestore.collection("posts").whereIn("postId",prueba)
+        val collection = firestore.collection("posts").whereIn("postId",queryStarPosts)
 
         val snapshotListener = collection?.addSnapshotListener { value, error ->
             val response = if (error == null) {
