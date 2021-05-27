@@ -346,12 +346,10 @@ class NavBar : ComponentActivity() {
                 .clickable(onClick = {
                     val intent = Intent(context, VistaPost::class.java)
                     intent.putExtra("idPost", post.postId);
+                    intent.putExtra("userName", post.userName);
                     startActivity(intent)
                 })
-
-
         ) {
-
             Row(
                 modifier = Modifier
                     .padding(16.dp)
@@ -423,11 +421,15 @@ class NavBar : ComponentActivity() {
                             )
                         },
                         error = {
-                            Box(
-                                modifier = Modifier.background(
-                                    shape = CircleShape,
-                                    color = Teal200
-                                )
+                            CoilImage(
+                                data = "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/delfaut_profile.jpg?alt=media&token=44fa05a5-075b-4eea-91e7-758f2d9ea3ed",
+                                contentDescription = "game",
+                                alignment = Alignment.TopCenter,
+                                modifier = Modifier
+                                    .height(150.dp)
+                                    .width(100.dp)
+                                    .clip(RoundedCornerShape(10.dp)),
+                                contentScale = ContentScale.Crop
                             )
                         }
                     )
@@ -538,7 +540,6 @@ class NavBar : ComponentActivity() {
                     finish()
                     model.setUserName("")
                     model.setUrlPhoto2("")
-                    //TODO esto sigue sin ir viewModel implementado
                 }) { Text(getString(R.string.logout)) }
 
             Divider(color = Color.White)

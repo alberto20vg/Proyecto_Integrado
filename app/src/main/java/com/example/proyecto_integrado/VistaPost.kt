@@ -12,17 +12,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -35,6 +35,7 @@ import com.google.firebase.auth.ktx.auth
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlin.collections.ArrayList
 import com.example.proyecto_integrado.CommentsPackage.*
+import com.example.proyecto_integrado.viewModels.VMSettings
 
 private val db = Firebase.firestore
 private var mauth = Firebase.auth
@@ -44,15 +45,16 @@ class VistaPost : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val objetIntent: Intent = intent
-        val valor = objetIntent.getStringExtra("idPost").toString()
+        val idPostString = objetIntent.getStringExtra("idPost").toString()
+        val userName = objetIntent.getStringExtra("userName").toString()
 
         setContent {
-            vistaPost(valor)
+            vistaPost(idPostString, userName)
         }
     }
 
     @Composable
-    fun vistaPost(valor: String, model: VMViewPost = viewModel()) {
+    fun vistaPost(idPostString: String, userName: String, model: VMViewPost = viewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -60,7 +62,7 @@ class VistaPost : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val docRef = db.collection("posts").document(valor)
+            val docRef = db.collection("posts").document(idPostString)
             docRef
                 .get()
                 .addOnSuccessListener { document ->
@@ -84,7 +86,7 @@ class VistaPost : ComponentActivity() {
             val starPhotoPost by model.starPhotoPostLiveData.observeAsState("https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/empty_star.png?alt=media&token=f73c0975-9d40-44ba-9221-5c7f92cf8764")
             val starPosts by model.starPostsLiveData.observeAsState(null)
 
-            if (starPosts?.contains(valor) == true) {
+            if (starPosts?.contains(idPostString) == true) {
                 model.setStarPhotoPost("https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/full_star.png?alt=media&token=164420ba-1863-4951-8741-f6582bf8c789")
             }
 
@@ -126,13 +128,13 @@ class VistaPost : ComponentActivity() {
                     .clickable {
                         model.setStarPhotoPost()
                         if (starPhotoPost == "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/full_star.png?alt=media&token=164420ba-1863-4951-8741-f6582bf8c789") {
-                            starPosts?.add(valor)
+                            starPosts?.add(idPostString)
                             db
                                 .collection("users")
                                 .document(user.uid)
                                 .update("starPosts", starPosts)
                         } else {
-                            starPosts?.remove(valor)
+                            starPosts?.remove(idPostString)
                             db
                                 .collection("users")
                                 .document(user.uid)
@@ -155,21 +157,25 @@ class VistaPost : ComponentActivity() {
                 text = textReview,
                 style = MaterialTheme.typography.h5
             )
-            CommentsList(valor)
+            CommentsList(idPostString)
 
             //TODO cosas para postear
+            postComment(idPostString, userName)
         }
     }
 
     @Composable
-    fun CommentsList(valor:String,commentsViewModel: CommentsViewModel = viewModel(factory = CommentsViewModelFactory(CommentsRepo()))
+    fun CommentsList(
+        idPostString: String,
+        commentsViewModel: CommentsViewModel = viewModel(
+            factory = CommentsViewModelFactory(CommentsRepo())
+        )
     ) {
-
-        val idPost by commentsViewModel.idPostLiveData.observeAsState(valor)
-        commentsViewModel.setIdPost(valor)
+        val idPost by commentsViewModel.idPostLiveData.observeAsState(idPostString)
+        commentsViewModel.setIdPost(idPostString)
 
         when (val commentList =
-            commentsViewModel.getCommentsInfo(valor).collectAsState(initial = null).value) {
+            commentsViewModel.getCommentsInfo(idPostString).collectAsState(initial = null).value) {
 
             is OnError -> {
                 Text(text = "Please try after sometime")
@@ -203,13 +209,71 @@ class VistaPost : ComponentActivity() {
     @Composable
     fun CommentsDetails(comments: Comments) {
         //TODO terminar de maquetar esto
-        Column(modifier = Modifier.clickable {
-        }) {
-            Text(
-                text = comments.text,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(16.dp)
+                .height(100.dp)
+        ) {
+            Column {
+                Text(
+                    text = comments.text,
+                    style = TextStyle(color = Color.Black),
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.padding(1.dp)
+                )
+
+                Text(
+                    text = comments.userName,
+                    style = TextStyle(color = Color.Black),
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.padding(1.dp)
+                )
+                Text(
+                    text = comments.score.toString(),
+                    style = TextStyle(color = Color.Black),
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.padding(1.dp)
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun postComment(idPostString: String, userName: String) {
+        var error by remember { mutableStateOf(false) }
+        val text = remember { mutableStateOf(TextFieldValue("")) }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            TextField(
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-            )
+                    .width(150.dp)
+                    .padding(1.dp),
+                value = text.value,
+                isError = error,
+                onValueChange = {
+                    text.value = it
+                    error = false
+                },
+                //TODO meter string
+                label = { getString(R.string.commentary) })
+
+            Button(onClick = {
+
+                val data = hashMapOf(
+                    "text" to text.value.text,
+                    "userName" to userName,
+                    "score" to 0
+                )
+
+                db.collection("comentariosPost").document(idPostString + "Comments")
+                    .collection("coments").add(data)
+            }
+                //TODO string
+            ) { Text(getString(R.string.comment)) }
         }
     }
 

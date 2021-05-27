@@ -120,8 +120,6 @@ class CreatePost : ComponentActivity() {
 
             Button(onClick = {
                 storageRef.child(urlPhotoGame).downloadUrl.addOnSuccessListener {
-                    val arrayList = ArrayList<String>()
-                    arrayList.add("")
 
                     val data = hashMapOf(
                         "autor" to user.uid,
@@ -130,7 +128,6 @@ class CreatePost : ComponentActivity() {
                         "urlPhotoUser" to urlPhoto,
                         "userName" to userName,
                         "email" to user.email,
-                        "comentarios" to arrayList,
                         "urlPhotoJuego" to it.toString(),
                         "gameName" to gameName,
                         "postId" to ""

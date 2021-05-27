@@ -2,7 +2,6 @@ package com.example.proyecto_integrado.PostsQuerys
 
 data class Posts(
     val autor: String,
-    val comentarios: String,
     val gameName: String,
     val textReview: String,
     val title: String,
@@ -12,5 +11,5 @@ data class Posts(
     val email:String,
     val postId:String
 ) {
-    constructor() : this("","","", "", "", "", "", "", "", "")
+    constructor() : this("","", "", "", "", "", "", "", "")
 }

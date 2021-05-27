@@ -12,13 +12,13 @@ class CommentsRepo {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getComments(valor: String) = callbackFlow {
-        //TODO aqui se tiene que pasar el id de comentario
-        val collection = firestore.collection("comentariosPost").document(valor+"Comments").collection("coments")
+        val collection = firestore.collection("comentariosPost").document(valor + "Comments")
+            .collection("coments")
         val snapshotListener = collection.addSnapshotListener { value, error ->
             val response = if (error == null) {
                 OnSuccess(value)
             } else {
-           OnError(error)
+                OnError(error)
             }
             offer(response)
         }
@@ -29,8 +29,9 @@ class CommentsRepo {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getComments(valor: MutableLiveData<String>) = callbackFlow {
-        //TODO aqui se tiene que pasar el id de comentario
-        val collection = firestore.collection("comentariosPost").document(valor.toString()+"Comments").collection("coments")
+        val collection =
+            firestore.collection("comentariosPost").document(valor.toString() + "Comments")
+                .collection("coments")
         val snapshotListener = collection.addSnapshotListener { value, error ->
             val response = if (error == null) {
                 OnSuccess(value)
