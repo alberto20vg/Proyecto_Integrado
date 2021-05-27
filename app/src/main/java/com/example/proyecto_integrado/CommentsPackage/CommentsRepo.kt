@@ -1,5 +1,6 @@
 package com.example.proyecto_integrado.CommentsPackage
 
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -18,6 +19,23 @@ class CommentsRepo {
                 OnSuccess(value)
             } else {
            OnError(error)
+            }
+            offer(response)
+        }
+        awaitClose {
+            snapshotListener.remove()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getComments(valor: MutableLiveData<String>) = callbackFlow {
+        //TODO aqui se tiene que pasar el id de comentario
+        val collection = firestore.collection("comentariosPost").document(valor.toString()+"Comments").collection("coments")
+        val snapshotListener = collection.addSnapshotListener { value, error ->
+            val response = if (error == null) {
+                OnSuccess(value)
+            } else {
+                OnError(error)
             }
             offer(response)
         }

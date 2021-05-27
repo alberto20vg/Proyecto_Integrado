@@ -164,6 +164,10 @@ class VistaPost : ComponentActivity() {
     @Composable
     fun CommentsList(valor:String,commentsViewModel: CommentsViewModel = viewModel(factory = CommentsViewModelFactory(CommentsRepo()))
     ) {
+
+        val idPost by commentsViewModel.idPostLiveData.observeAsState(valor)
+        commentsViewModel.setIdPost(valor)
+
         when (val commentList =
             commentsViewModel.getCommentsInfo(valor).collectAsState(initial = null).value) {
 
