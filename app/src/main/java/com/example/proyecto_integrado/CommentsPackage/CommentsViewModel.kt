@@ -12,7 +12,7 @@ class CommentsViewModel(val commentsRepo: CommentsRepo) : ViewModel() {
     init {
         viewModelScope.launch {
             //TODO ver como soluciono esto
-            var valor = "ENuk29GTQbeLFoQdhySB"
+            val valor = "ENuk29GTQbeLFoQdhySB"
             commentsRepo.getComments(valor).collect { commentsStateFlow.value = it }
         }
     }
