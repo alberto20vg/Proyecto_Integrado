@@ -18,7 +18,7 @@
         <activity android:name=".NavBar" />
         <activity android:name=".CreatePost" />
         <activity android:name=".AddGame" />
-        <activity android:name=".VistaPost" />
+        <activity android:name=".PostView" />
 
 
         <activity

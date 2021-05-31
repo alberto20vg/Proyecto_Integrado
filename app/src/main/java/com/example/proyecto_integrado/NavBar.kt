@@ -344,9 +344,9 @@ class NavBar : ComponentActivity() {
             shape = RoundedCornerShape(8.dp), elevation = 8.dp, modifier = Modifier
                 .padding(8.dp)
                 .clickable(onClick = {
-                    val intent = Intent(context, VistaPost::class.java)
+                    val intent = Intent(context, PostView::class.java)
                     intent.putExtra("idPost", post.postId);
-                    intent.putExtra("userName", post.userName);
+                    intent.putExtra("photoUser", post.urlPhotoUser);
                     startActivity(intent)
                 })
         ) {
