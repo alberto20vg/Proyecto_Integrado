@@ -37,6 +37,7 @@ import com.google.firebase.auth.ktx.auth
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlin.collections.ArrayList
 import com.example.proyecto_integrado.CommentsPackage.*
+import com.google.firebase.iid.FirebaseInstanceId
 
 private val db = Firebase.firestore
 private var mauth = Firebase.auth
@@ -51,6 +52,15 @@ class PostView : ComponentActivity() {
 
         setContent {
             vistaPost(idPostString, photoUser)
+        }
+    }
+
+    private fun notification(){
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener{
+            it.result?.token.let {
+                //aqui it es un token
+                println("Token de registro "+it)
+            }
         }
     }
 
@@ -134,6 +144,7 @@ class PostView : ComponentActivity() {
                                 .collection("users")
                                 .document(user.uid)
                                 .update("starPosts", starPosts)
+                            notification()
                         } else {
                             starPosts?.remove(idPostString)
                             db

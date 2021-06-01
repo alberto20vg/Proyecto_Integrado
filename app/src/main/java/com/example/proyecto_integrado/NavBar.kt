@@ -551,7 +551,7 @@ class NavBar : ComponentActivity() {
                     model.setUserName("")
                     model.setUrlPhoto2("")
                 }) { Text(getString(R.string.logout)) }
-
+/*
             Divider(color = Color.White)
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -617,7 +617,11 @@ class NavBar : ComponentActivity() {
                         ).show()
                     }
                 )
+
+
             }
+
+ */
         }
     }
 }
