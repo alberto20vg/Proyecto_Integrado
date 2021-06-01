@@ -7,53 +7,74 @@ import com.example.proyecto_integrado.R
 
 class VMPostView : ViewModel() {
 
-    var star1 = MutableLiveData<String>()
+    var text = MutableLiveData<String>()
 
-    val star1LiveData: MutableLiveData<String>
+    val textLiveData: MutableLiveData<String>
+        get() = text
+
+
+    fun setText(s: String) {
+        text.value = s
+    }
+
+
+    var score = MutableLiveData<String>()
+
+    val scoreLiveData: MutableLiveData<String>
+        get() = score
+
+
+    fun setScore(i: String) {
+        score.value = i
+    }
+
+    var star1 = MutableLiveData<Int>()
+
+    val star1LiveData: MutableLiveData<Int>
         get() = star1
 
 
-    fun setStar1(s: String) {
+    fun setStar1(s: Int) {
         star1.value = s
     }
 
-    var star2 = MutableLiveData<String>()
+    var star2 = MutableLiveData<Int>()
 
-    val star2LiveData: MutableLiveData<String>
+    val star2LiveData: MutableLiveData<Int>
         get() = star2
 
 
-    fun setStar2(s: String) {
+    fun setStar2(s: Int) {
         star2.value = s
     }
 
-    var star3 = MutableLiveData<String>()
+    var star3 = MutableLiveData<Int>()
 
-    val star3LiveData: MutableLiveData<String>
+    val star3LiveData: MutableLiveData<Int>
         get() = star3
 
 
-    fun setStar3(s: String) {
+    fun setStar3(s: Int) {
         star3.value = s
     }
 
-    var star4 = MutableLiveData<String>()
+    var star4 = MutableLiveData<Int>()
 
-    val star4LiveData: MutableLiveData<String>
+    val star4LiveData: MutableLiveData<Int>
         get() = star4
 
 
-    fun setStar4(s: String) {
+    fun setStar4(s: Int) {
         star4.value = s
     }
 
-    var star5 = MutableLiveData<String>()
+    var star5 = MutableLiveData<Int>()
 
-    val star5LiveData: MutableLiveData<String>
+    val star5LiveData: MutableLiveData<Int>
         get() = star5
 
 
-    fun setStar5(s: String) {
+    fun setStar5(s: Int) {
         star5.value = s
     }
 

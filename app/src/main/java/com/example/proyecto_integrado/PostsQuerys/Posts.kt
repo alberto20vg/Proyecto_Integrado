@@ -5,7 +5,7 @@ data class Posts(
     val gameName: String,
     val textReview: String,
     val title: String,
-    val urlPhotoJuego: String,
+    val urlPhotoGame: String,
     val urlPhotoUser: String,
     val userName: String,
     val email:String,

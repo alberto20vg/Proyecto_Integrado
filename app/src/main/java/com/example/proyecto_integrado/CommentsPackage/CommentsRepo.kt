@@ -12,7 +12,7 @@ class CommentsRepo {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getComments(valor: String) = callbackFlow {
-        val collection = firestore.collection("comentariosPost").document(valor + "Comments")
+        val collection = firestore.collection("commentsPost").document(valor + "Comments")
             .collection("coments")
         val snapshotListener = collection.addSnapshotListener { value, error ->
             val response = if (error == null) {
@@ -30,7 +30,7 @@ class CommentsRepo {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getComments(valor: MutableLiveData<String>) = callbackFlow {
         val collection =
-            firestore.collection("comentariosPost").document(valor.toString() + "Comments")
+            firestore.collection("commentsPost").document(valor.toString() + "Comments")
                 .collection("coments")
         val snapshotListener = collection.addSnapshotListener { value, error ->
             val response = if (error == null) {

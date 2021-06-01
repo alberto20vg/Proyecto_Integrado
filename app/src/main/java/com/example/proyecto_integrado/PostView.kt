@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -66,7 +67,7 @@ class PostView : ComponentActivity() {
             docRef
                 .get()
                 .addOnSuccessListener { document ->
-                    model.setUrlPhotoGame(document.getString("urlPhotoJuego").toString())
+                    model.setUrlPhotoGame(document.getString("urlPhotoGame").toString())
                     model.setTitle(document.getString("title").toString())
                     model.setTextReview(document.getString("textReview").toString())
                 }.addOnFailureListener {}
@@ -122,8 +123,8 @@ class PostView : ComponentActivity() {
                 contentDescription = "game",
                 alignment = Alignment.TopCenter,
                 modifier = Modifier
-                    .height(80.dp)
-                    .width(80.dp)
+                    .height(60.dp)
+                    .width(60.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .clickable {
                         model.setStarPhotoPost()
@@ -164,7 +165,6 @@ class PostView : ComponentActivity() {
             )
             CommentsList(idPostString)
 
-            //TODO cosas para postear
             postComment(idPostString, photoUser)
         }
     }
@@ -213,14 +213,13 @@ class PostView : ComponentActivity() {
 
     @Composable
     fun CommentsDetails(comments: Comments, model: VMPostView = viewModel()) {
-        //TODO terminar de maquetar esto
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(16.dp)
-                .height(100.dp)
+                .height(80.dp)
         ) {
-            Row() {
+            Row {
                 CoilImage(
                     data = comments.photoUser,
                     contentDescription = "android",
@@ -254,7 +253,11 @@ class PostView : ComponentActivity() {
                 )
 
 
-                Column {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(16.dp)
+                ) {
                     Text(
                         text = comments.text,
                         style = TextStyle(color = Color.Black),
@@ -262,11 +265,11 @@ class PostView : ComponentActivity() {
                         modifier = Modifier.padding(1.dp)
                     )
 
+                    Spacer(modifier = Modifier.padding(4.dp))
 
-                    //TODO manejar estrellas con el score
                     Row() {
                         Text(
-                            text = comments.score.toString(),
+                            text = comments.score,
                             style = TextStyle(color = Color.Black),
                             textAlign = TextAlign.Left,
                             modifier = Modifier.padding(1.dp)
@@ -290,142 +293,131 @@ class PostView : ComponentActivity() {
     }
 
     @Composable
-    fun postComment(idPostString: String, photoUser: String) {
+    fun postComment(idPostString: String, photoUser: String, model: VMPostView = viewModel()) {
         var error by remember { mutableStateOf(false) }
-        val text = remember { mutableStateOf(TextFieldValue("")) }
+        val score by model.scoreLiveData.observeAsState("0")
+        val text by model.textLiveData.observeAsState("")
+        var text2 = remember { mutableStateOf(TextFieldValue(text)) }
         Row(
             modifier = Modifier.padding(all = 16.dp)
         ) {
             Column() {
 
+                val star1 by model.star1LiveData.observeAsState(R.drawable.empty_star)
+                val star2 by model.star2LiveData.observeAsState(R.drawable.empty_star)
+                val star3 by model.star3LiveData.observeAsState(R.drawable.empty_star)
+                val star4 by model.star4LiveData.observeAsState(R.drawable.empty_star)
+                val star5 by model.star5LiveData.observeAsState(R.drawable.empty_star)
+
+
                 TextField(
                     modifier = Modifier
                         .width(240.dp)
                         .height(50.dp),
-                    value = text.value,
+                    value = text2.value,
                     isError = error,
                     onValueChange = {
-                        text.value = it
+                        text2.value = it
                         error = false
+                        model.setText(text2.value.text)
                     },
                     label = { getString(R.string.commentary) })
                 Row() {
-                    //TODO hacer en los clicks cambios en las estrellas
-                    CoilImage(
-                        data = "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/full_star.png?alt=media&token=164420ba-1863-4951-8741-f6582bf8c789",
-                        contentDescription = "game",
-                        alignment = Alignment.TopCenter,
+                    Image(
+                        painter = painterResource(id = star1),
+                        contentDescription = "star",
                         modifier = Modifier
                             .height(25.dp)
                             .width(25.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .clickable {
-
-                            },
-                        contentScale = ContentScale.Crop,
-                        loading = {
-                            Box(
-                                modifier = Modifier.background(
-                                    color = Teal200
-                                )
-                            )
-                        }
+                                model.setStar1(R.drawable.full_star)
+                                model.setStar2(R.drawable.empty_star)
+                                model.setStar3(R.drawable.empty_star)
+                                model.setStar4(R.drawable.empty_star)
+                                model.setStar5(R.drawable.empty_star)
+                                model.setScore("1")
+                            }
                     )
-                    CoilImage(
-                        data = "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/full_star.png?alt=media&token=164420ba-1863-4951-8741-f6582bf8c789",
-                        contentDescription = "game",
-                        alignment = Alignment.TopCenter,
+                    Image(
+                        painter = painterResource(id = star2),
+                        contentDescription = "star",
                         modifier = Modifier
                             .height(25.dp)
                             .width(25.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .clickable {
-
-                            },
-                        contentScale = ContentScale.Crop,
-                        loading = {
-                            Box(
-                                modifier = Modifier.background(
-                                    color = Teal200
-                                )
-                            )
-                        }
+                                model.setStar1(R.drawable.full_star)
+                                model.setStar2(R.drawable.full_star)
+                                model.setStar3(R.drawable.empty_star)
+                                model.setStar4(R.drawable.empty_star)
+                                model.setStar5(R.drawable.empty_star)
+                                model.setScore("2")
+                            }
                     )
-                    CoilImage(
-                        data = "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/full_star.png?alt=media&token=164420ba-1863-4951-8741-f6582bf8c789",
-                        contentDescription = "game",
-                        alignment = Alignment.TopCenter,
+                    Image(
+                        painter = painterResource(id = star3),
+                        contentDescription = "star",
                         modifier = Modifier
                             .height(25.dp)
                             .width(25.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .clickable {
-
-                            },
-                        contentScale = ContentScale.Crop,
-                        loading = {
-                            Box(
-                                modifier = Modifier.background(
-                                    color = Teal200
-                                )
-                            )
-                        }
+                                model.setStar1(R.drawable.full_star)
+                                model.setStar2(R.drawable.full_star)
+                                model.setStar3(R.drawable.full_star)
+                                model.setStar4(R.drawable.empty_star)
+                                model.setStar5(R.drawable.empty_star)
+                                model.setScore("3")
+                            }
                     )
-                    CoilImage(
-                        data = "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/full_star.png?alt=media&token=164420ba-1863-4951-8741-f6582bf8c789",
-                        contentDescription = "game",
-                        alignment = Alignment.TopCenter,
+                    Image(
+                        painter = painterResource(id = star4),
+                        contentDescription = "star",
                         modifier = Modifier
                             .height(25.dp)
                             .width(25.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .clickable {
-
-                            },
-                        contentScale = ContentScale.Crop,
-                        loading = {
-                            Box(
-                                modifier = Modifier.background(
-                                    color = Teal200
-                                )
-                            )
-                        }
+                                model.setStar1(R.drawable.full_star)
+                                model.setStar2(R.drawable.full_star)
+                                model.setStar3(R.drawable.full_star)
+                                model.setStar4(R.drawable.full_star)
+                                model.setStar5(R.drawable.empty_star)
+                                model.setScore("4")
+                            }
                     )
-                    CoilImage(
-                        data = "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/full_star.png?alt=media&token=164420ba-1863-4951-8741-f6582bf8c789",
-                        contentDescription = "game",
-                        alignment = Alignment.TopCenter,
+                    Image(
+                        painter = painterResource(id = star5),
+                        contentDescription = "star",
                         modifier = Modifier
                             .height(25.dp)
                             .width(25.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .clickable {
-
-                            },
-                        contentScale = ContentScale.Crop,
-                        loading = {
-                            Box(
-                                modifier = Modifier.background(
-                                    color = Teal200
-                                )
-                            )
-                        }
+                                model.setStar1(R.drawable.full_star)
+                                model.setStar2(R.drawable.full_star)
+                                model.setStar3(R.drawable.full_star)
+                                model.setStar4(R.drawable.full_star)
+                                model.setStar5(R.drawable.full_star)
+                                model.setScore("5")
+                            }
                     )
-
                 }
             }
             Button(modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .padding(start = 5.dp),
+                .padding(start = 5.dp, bottom = 18.dp),
                 onClick = {
                     val data = hashMapOf(
-                        "text" to text.value.text,
+                        "text" to text,
                         "photoUser" to photoUser,
-                        "score" to 0
+                        "score" to score
                     )
 
-                    db.collection("comentariosPost").document(idPostString + "Comments")
+                    db.collection("commentsPost").document(idPostString + "Comments")
                         .collection("coments").add(data)
+                    model.setText("")
                 }
             ) { Text(getString(R.string.comment)) }
         }

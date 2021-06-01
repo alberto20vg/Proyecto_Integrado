@@ -85,7 +85,7 @@ class NavBar : ComponentActivity() {
                 urlPhoto2 = it.toString()
             }.addOnFailureListener {
                 urlPhoto2 =
-                    "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/delfaut_profile.jpg?alt=media&token=44fa05a5-075b-4eea-91e7-758f2d9ea3ed"
+                    "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/delfautProfile.jpg?alt=media&token=247b3a3b-4500-4ce5-ac96-455e44959194"
             }
             //---usado por settings---
 
@@ -338,15 +338,21 @@ class NavBar : ComponentActivity() {
     }
 
     @Composable
-    private fun RecyclerCard(post: Posts) {
+    private fun RecyclerCard(post: Posts, model: VMSettings = viewModel()) {
         val context = LocalContext.current
+        val urlPhotoVM by model.urlPhoto2LiveData.observeAsState(urlPhoto2)
         Card(
             shape = RoundedCornerShape(8.dp), elevation = 8.dp, modifier = Modifier
                 .padding(8.dp)
                 .clickable(onClick = {
                     val intent = Intent(context, PostView::class.java)
                     intent.putExtra("idPost", post.postId);
-                    intent.putExtra("photoUser", post.urlPhotoUser);
+
+                    if (user.providerData[1].providerId == "google.com") {
+                        intent.putExtra("urlPhoto", user.photoUrl);
+                    } else {
+                        intent.putExtra("urlPhoto", urlPhotoVM);
+                    }
                     startActivity(intent)
                 })
         ) {
@@ -357,7 +363,7 @@ class NavBar : ComponentActivity() {
             ) {
 
                 CoilImage(
-                    data = post.urlPhotoJuego,
+                    data = post.urlPhotoGame,
                     contentDescription = "game",
                     alignment = Alignment.TopCenter,
                     modifier = Modifier
@@ -389,7 +395,11 @@ class NavBar : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
 
-                    Text(text = post.title, style = MaterialTheme.typography.h6)
+                    Text(
+                        text = post.title,
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.padding(start = 30.dp)
+                    )
 
                     Spacer(modifier = Modifier.padding(5.dp))
 
@@ -422,7 +432,7 @@ class NavBar : ComponentActivity() {
                         },
                         error = {
                             CoilImage(
-                                data = "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/delfaut_profile.jpg?alt=media&token=44fa05a5-075b-4eea-91e7-758f2d9ea3ed",
+                                data = "https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/delfautProfile.jpg?alt=media&token=247b3a3b-4500-4ce5-ac96-455e44959194",
                                 contentDescription = "game",
                                 alignment = Alignment.TopCenter,
                                 modifier = Modifier

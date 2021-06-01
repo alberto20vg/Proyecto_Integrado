@@ -128,7 +128,7 @@ class CreatePost : ComponentActivity() {
                         "urlPhotoUser" to urlPhoto,
                         "userName" to userName,
                         "email" to user.email,
-                        "urlPhotoJuego" to it.toString(),
+                        "urlPhotoGame" to it.toString(),
                         "gameName" to gameName,
                         "postId" to ""
                     )
