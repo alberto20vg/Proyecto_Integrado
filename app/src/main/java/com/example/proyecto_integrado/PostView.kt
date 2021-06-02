@@ -38,34 +38,44 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlin.collections.ArrayList
 import com.example.proyecto_integrado.CommentsPackage.*
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.storage.ktx.storage
 
 private val db = Firebase.firestore
 private var mauth = Firebase.auth
 private var user = mauth.currentUser
+private val storageRef = Firebase.storage.reference
 
 class PostView : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val objetIntent: Intent = intent
         val idPostString = objetIntent.getStringExtra("idPost").toString()
-        val photoUser = objetIntent.getStringExtra("photoUser").toString()
 
         setContent {
-            vistaPost(idPostString, photoUser)
+            vistaPost(idPostString)
         }
     }
 
-    private fun notification(){
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener{
+    private fun notification() {
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
             it.result?.token.let {
                 //aqui it es un token
-                println("Token de registro "+it)
+                println("Token de registro " + it)
             }
         }
     }
 
     @Composable
-    fun vistaPost(idPostString: String, photoUser: String, model: VMPostView = viewModel()) {
+    fun vistaPost(idPostString: String, model: VMPostView = viewModel()) {
+
+        val urlPhoto by model.urlPhotoLiveData.observeAsState("")
+        //TODO inicializacion del viewModel
+        storageRef.child(user.uid).downloadUrl.addOnSuccessListener {
+            model.setUrlPhoto(it.toString())
+        }.addOnFailureListener {
+            model.setUrlPhoto("https://firebasestorage.googleapis.com/v0/b/proyecto-integrado-8b304.appspot.com/o/delfautProfile.jpg?alt=media&token=247b3a3b-4500-4ce5-ac96-455e44959194")
+
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -176,7 +186,7 @@ class PostView : ComponentActivity() {
             )
             CommentsList(idPostString)
 
-            postComment(idPostString, photoUser)
+            postComment(idPostString)
         }
     }
 
@@ -304,7 +314,7 @@ class PostView : ComponentActivity() {
     }
 
     @Composable
-    fun postComment(idPostString: String, photoUser: String, model: VMPostView = viewModel()) {
+    fun postComment(idPostString: String, model: VMPostView = viewModel()) {
         var error by remember { mutableStateOf(false) }
         val score by model.scoreLiveData.observeAsState("0")
         val text by model.textLiveData.observeAsState("")
@@ -422,7 +432,11 @@ class PostView : ComponentActivity() {
                 onClick = {
                     val data = hashMapOf(
                         "text" to text,
-                        "photoUser" to photoUser,
+                        "photoUser" to if (user.providerData[1].providerId == "google.com") {
+                            user.photoUrl
+                        } else {
+                            model.urlPhoto.value.toString()
+                        },
                         "score" to score
                     )
 
