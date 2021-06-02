@@ -7,6 +7,16 @@ import com.example.proyecto_integrado.R
 
 class VMPostView : ViewModel() {
 
+    var urlPhoto = MutableLiveData<String>()
+
+    val urlPhotoLiveData: MutableLiveData<String>
+        get() = urlPhoto
+
+
+    fun setUrlPhoto(s: String) {
+        urlPhoto.value = s
+    }
+
     var text = MutableLiveData<String>()
 
     val textLiveData: MutableLiveData<String>
