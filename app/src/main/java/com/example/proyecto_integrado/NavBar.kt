@@ -195,8 +195,8 @@ class NavBar : ComponentActivity() {
 
     @Composable
     fun PostsScreen() {
-        val navController = rememberNavController()
-        Surface(color = MaterialTheme.colors.background) {
+        Proyecto_IntegradoTheme {
+            val navController = rememberNavController()
             Scaffold(
                 Modifier
                     .focusModifier()
@@ -291,41 +291,41 @@ class NavBar : ComponentActivity() {
             )
         )
     ) {
-        val context = LocalContext.current
-        Scaffold(
-            backgroundColor = Color(0xFFFEFEFA),
-            floatingActionButtonPosition = FabPosition.End,
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        val intent = Intent(context, CreatePost::class.java)
-                        startActivity(intent)
+            val context = LocalContext.current
+            Scaffold(
+                floatingActionButtonPosition = FabPosition.End,
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = {
+                            val intent = Intent(context, CreatePost::class.java)
+                            startActivity(intent)
+                        }
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Localized description")
                     }
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Localized description")
                 }
-            }
-        ) {
-            when (val postsList =
-                postsViewModel.getMyPostInfo().collectAsState(initial = null).value) {
+            ) {
+                when (val postsList =
+                    postsViewModel.getMyPostInfo().collectAsState(initial = null).value) {
 
-                is OnError -> {
-                    Text(text = "Please try after sometime")
-                }
+                    is OnError -> {
+                        Text(text = "Please try after sometime")
+                    }
 
-                is OnSuccess -> {
-                    val listOfPosts = postsList.querySnapshot?.toObjects(Posts::class.java)
-                    listOfPosts?.let {
-                        Column {
-                            LazyColumn(modifier = Modifier.fillMaxHeight()) {
-                                items(listOfPosts) {
-                                    Card(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(6.dp),
-                                        shape = RoundedCornerShape(16.dp)
-                                    ) {
-                                        RecyclerCard(it)
+                    is OnSuccess -> {
+                        val listOfPosts = postsList.querySnapshot?.toObjects(Posts::class.java)
+                        listOfPosts?.let {
+                            Column {
+                                LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                                    items(listOfPosts) {
+                                        Card(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(6.dp),
+                                            shape = RoundedCornerShape(16.dp)
+                                        ) {
+                                            RecyclerCard(it)
+                                        }
                                     }
                                 }
                             }
@@ -333,8 +333,6 @@ class NavBar : ComponentActivity() {
                     }
                 }
             }
-        }
-
     }
 
     @Composable
@@ -519,7 +517,6 @@ class NavBar : ComponentActivity() {
 
                     Text(
                         text = user.email,
-                        style = TextStyle(color = Color.Black),
                         textAlign = TextAlign.Left,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -530,7 +527,6 @@ class NavBar : ComponentActivity() {
                         } else {
                             userNameVM
                         },
-                        style = TextStyle(color = Color.Black),
                         textAlign = TextAlign.Left,
                         modifier = Modifier.padding(16.dp)
                     )

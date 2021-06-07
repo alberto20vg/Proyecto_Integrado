@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GameHub</string>
+    <string name="user">User</string>
+    <string name="password">password</string>
+    <string name="authentication_failed">Autenticación fallida</string>
+    <string name="authentication_sucess">Éxito de la autenticación</string>
+    <string name="log_in">log in</string>
+    <string name="register">register</string>
+    <string name="name">name</string>
+    <string name="email">email</string>
+    <string name="repeat_password">repeat_password</string>
+    <string name="upload_potho">upload potho</string>
+    <string name="wrong_password">Passwords do not match</string>
+    <string name="empty_data">empty data</string>
+    <string name="start">Start</string>
+    <string name="posts">Posts</string>
+    <string name="settings">Settings</string>
+    <string name="account">Account</string>
+    <string name="notifications">Notifications</string>
+    <string name="add_game">Add game</string>
+    <string name="title">Title</string>
+    <string name="enter_text">Enter Text</string>
+    <string name="post">Post</string>
+    <string name="logout">Sign off</string>
+    <string name="comment">Comment</string>
+    <string name="commentary">Commentary</string>
+</resources>

@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.example.proyecto_integrado.ui.theme.Teal200
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -45,7 +46,8 @@ class AddGame : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_game).apply {
-            findViewById<ComposeView>(R.id.compose_view).setContent { MaterialTheme { addGame() } }
+            findViewById<ComposeView>(R.id.compose_view).setContent {
+                Proyecto_IntegradoTheme {MaterialTheme { addGame() } }}
         }
     }
 

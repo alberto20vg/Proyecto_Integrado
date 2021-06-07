@@ -22,21 +22,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 
 class SplashScreen : ComponentActivity() {
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            imagen()
-            val handler = Handler()
-            handler.postDelayed(
-                {
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }, 1000
-            )
+            Proyecto_IntegradoTheme {
+                imagen()
+                val handler = Handler()
+                handler.postDelayed(
+                    {
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }, 1000
+                )
+            }
         }
     }
 

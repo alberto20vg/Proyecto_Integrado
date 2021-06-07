@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyecto_integrado.GamesPackage.*
+import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.example.proyecto_integrado.viewModels.VMCreatePost
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -43,21 +44,23 @@ class CreatePost : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            createPost()
+            Proyecto_IntegradoTheme {
+                createPost()
 
-            storageRef.child(user.uid).downloadUrl.addOnSuccessListener {
-                urlPhoto = it.toString()
-            }.addOnFailureListener {
+                storageRef.child(user.uid).downloadUrl.addOnSuccessListener {
+                    urlPhoto = it.toString()
+                }.addOnFailureListener {
+                }
+
+                val docRef = db.collection("users").document(user.uid)
+                docRef
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            userName = document.getString("user").toString()
+                        }
+                    }.addOnFailureListener {}
             }
-
-            val docRef = db.collection("users").document(user.uid)
-            docRef
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        userName = document.getString("user").toString()
-                    }
-                }.addOnFailureListener {}
         }
     }
 
