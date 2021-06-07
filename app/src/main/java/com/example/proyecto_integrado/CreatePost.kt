@@ -181,7 +181,7 @@ class CreatePost : ComponentActivity() {
             is OnSuccess -> {
                 val listOfGames = gamesList.querySnapshot?.toObjects(Games::class.java)
                 listOfGames?.let {
-                    Column(modifier = Modifier.height(100.dp)) {
+                    Column(modifier = Modifier.height(130.dp)) {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxHeight()
