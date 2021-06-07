@@ -37,6 +37,7 @@ import com.google.firebase.auth.ktx.auth
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlin.collections.ArrayList
 import com.example.proyecto_integrado.CommentsPackage.*
+import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.ktx.storage
 
@@ -52,7 +53,9 @@ class PostView : ComponentActivity() {
         val idPostString = objetIntent.getStringExtra("idPost").toString()
 
         setContent {
-            vistaPost(idPostString)
+            Proyecto_IntegradoTheme {
+                vistaPost(idPostString)
+            }
         }
     }
 

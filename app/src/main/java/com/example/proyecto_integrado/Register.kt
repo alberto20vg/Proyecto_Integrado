@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.proyecto_integrado.ui.theme.Proyecto_IntegradoTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -60,157 +61,163 @@ class Register : ComponentActivity() {
             uploadImage(R.drawable.delfaut_profile)
 
             findViewById<ComposeView>(R.id.compose_view).setContent {
-                MaterialTheme {
+                Proyecto_IntegradoTheme {
+                    MaterialTheme {
 
-                    val context = LocalContext.current
+                        val context = LocalContext.current
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        Button(onClick = {
-                            ImageController.selectPhotoFromGallery(this@Register, SELECT_ACTIVITY)
-                        }) { Text(getString(R.string.upload_potho)) }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        var error by remember { mutableStateOf(false) }
-                        val user = remember { mutableStateOf(TextFieldValue("")) }
-                        val email = remember { mutableStateOf(TextFieldValue("")) }
-                        val password = remember { mutableStateOf(TextFieldValue("")) }
-                        val repeatPassword = remember { mutableStateOf(TextFieldValue("")) }
-
-                        TextField(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
-                            value = user.value,
-                            isError = error,
-                            onValueChange = {
-                                user.value = it
-                                error = false
-                            },
-                            label = { Text(getString(R.string.user)) })
+                                .fillMaxHeight()
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Button(onClick = {
+                                ImageController.selectPhotoFromGallery(
+                                    this@Register,
+                                    SELECT_ACTIVITY
+                                )
+                            }) { Text(getString(R.string.upload_potho)) }
 
-                        TextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            value = email.value,
-                            isError = error,
-                            onValueChange = {
-                                email.value = it
-                                error = false
-                            },
-                            label = { Text(getString(R.string.email)) })
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            var error by remember { mutableStateOf(false) }
+                            val user = remember { mutableStateOf(TextFieldValue("")) }
+                            val email = remember { mutableStateOf(TextFieldValue("")) }
+                            val password = remember { mutableStateOf(TextFieldValue("")) }
+                            val repeatPassword = remember { mutableStateOf(TextFieldValue("")) }
 
-                        TextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            value = password.value,
-                            isError = error,
-                            onValueChange = {
-                                password.value = it
-                                error = false
-                            }, visualTransformation = PasswordVisualTransformation(),
-                            label = { Text(getString(R.string.password)) })
+                            TextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                value = user.value,
+                                isError = error,
+                                onValueChange = {
+                                    user.value = it
+                                    error = false
+                                },
+                                label = { Text(getString(R.string.user)) })
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        TextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            value = repeatPassword.value,
-                            isError = error,
-                            onValueChange = {
-                                repeatPassword.value = it
-                                error = false
-                            }, visualTransformation = PasswordVisualTransformation(),
-                            label = { Text(getString(R.string.repeat_password)) })
+                            TextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                value = email.value,
+                                isError = error,
+                                onValueChange = {
+                                    email.value = it
+                                    error = false
+                                },
+                                label = { Text(getString(R.string.email)) })
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        Button(onClick = {
-                            val isUserEmpty = user.value.text.isEmpty()
-                            val isEmailEmpty = email.value.text.isEmpty()
-                            val isPasswordEmpty = password.value.text.isEmpty()
-                            val isRepeatPasswordEmpty = repeatPassword.value.text.isEmpty()
-                            val passwordsMatch = password.value == repeatPassword.value
+                            TextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                value = password.value,
+                                isError = error,
+                                onValueChange = {
+                                    password.value = it
+                                    error = false
+                                }, visualTransformation = PasswordVisualTransformation(),
+                                label = { Text(getString(R.string.password)) })
 
-                            if (isUserEmpty || isEmailEmpty || isPasswordEmpty || isRepeatPasswordEmpty) {
-                                Toast.makeText(
-                                    baseContext, R.string.authentication_failed,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                error = true
-                            } else {
-                                if (passwordsMatch) {
-                                    mauth.createUserWithEmailAndPassword(
-                                        email.value.text,
-                                        password.value.text
-                                    ).addOnCompleteListener(this@Register) { task ->
-                                        if (task.isSuccessful) {
-                                            val userId = mauth.currentUser.uid
-                                            val file = imageUri
-                                            val arrayList = ArrayList<String>()
-                                            arrayList.add("")
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                                            if (file == null) {
+                            TextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                value = repeatPassword.value,
+                                isError = error,
+                                onValueChange = {
+                                    repeatPassword.value = it
+                                    error = false
+                                }, visualTransformation = PasswordVisualTransformation(),
+                                label = { Text(getString(R.string.repeat_password)) })
 
-                                                Handler().postDelayed({
-                                                    val data = hashMapOf(
-                                                        "user" to user.value.text,
-                                                        "userId" to userId,
-                                                        "photo" to "delfaut_profile.jpg",
-                                                        "starPosts" to arrayList
-                                                    )
-                                                    db.collection("users").document(userId)
-                                                        .set(data)
-                                                }, 500)
-                                            } else {
-                                                val imageRef = storageRef.child(userId)
-                                                val uploadTask = file?.let { imageRef.putFile(it) }
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                                                uploadTask?.addOnFailureListener {
-                                                }?.addOnSuccessListener {
-                                                }
+                            Button(onClick = {
+                                val isUserEmpty = user.value.text.isEmpty()
+                                val isEmailEmpty = email.value.text.isEmpty()
+                                val isPasswordEmpty = password.value.text.isEmpty()
+                                val isRepeatPasswordEmpty = repeatPassword.value.text.isEmpty()
+                                val passwordsMatch = password.value == repeatPassword.value
 
-                                                Handler().postDelayed({
-                                                    val data = hashMapOf(
-                                                        "user" to user.value.text,
-                                                        "userId" to userId,
-                                                        "photo" to userId,
-                                                        "starPosts" to arrayList
-                                                    )
-                                                    db.collection("users").document(userId)
-                                                        .set(data)
-                                                }, 500)
-                                            }
-                                            val intent = Intent(context, NavBar::class.java)
-                                            startActivity(intent)
-                                            finish()
-                                        }
-                                    }
-                                } else {
+                                if (isUserEmpty || isEmailEmpty || isPasswordEmpty || isRepeatPasswordEmpty) {
                                     Toast.makeText(
-                                        baseContext, R.string.wrong_password,
+                                        baseContext, R.string.authentication_failed,
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     error = true
+                                } else {
+                                    if (passwordsMatch) {
+                                        mauth.createUserWithEmailAndPassword(
+                                            email.value.text,
+                                            password.value.text
+                                        ).addOnCompleteListener(this@Register) { task ->
+                                            if (task.isSuccessful) {
+                                                val userId = mauth.currentUser.uid
+                                                val file = imageUri
+                                                val arrayList = ArrayList<String>()
+                                                arrayList.add("")
+
+                                                if (file == null) {
+
+                                                    Handler().postDelayed({
+                                                        val data = hashMapOf(
+                                                            "user" to user.value.text,
+                                                            "userId" to userId,
+                                                            "photo" to "delfaut_profile.jpg",
+                                                            "starPosts" to arrayList
+                                                        )
+                                                        db.collection("users").document(userId)
+                                                            .set(data)
+                                                    }, 500)
+                                                } else {
+                                                    val imageRef = storageRef.child(userId)
+                                                    val uploadTask =
+                                                        file?.let { imageRef.putFile(it) }
+
+                                                    uploadTask?.addOnFailureListener {
+                                                    }?.addOnSuccessListener {
+                                                    }
+
+                                                    Handler().postDelayed({
+                                                        val data = hashMapOf(
+                                                            "user" to user.value.text,
+                                                            "userId" to userId,
+                                                            "photo" to userId,
+                                                            "starPosts" to arrayList
+                                                        )
+                                                        db.collection("users").document(userId)
+                                                            .set(data)
+                                                    }, 500)
+                                                }
+                                                val intent = Intent(context, NavBar::class.java)
+                                                startActivity(intent)
+                                                finish()
+                                            }
+                                        }
+                                    } else {
+                                        Toast.makeText(
+                                            baseContext, R.string.wrong_password,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        error = true
+                                    }
                                 }
-                            }
-                        }) { Text(getString(R.string.register)) }
+                            }) { Text(getString(R.string.register)) }
+                        }
                     }
                 }
             }
